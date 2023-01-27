@@ -1,0 +1,18 @@
+# REF https://github.com/Bash-it/bash-it/blob/master/.editorconfig
+# ./node_modules/.bin/eslint src --fix   to apply at large scale
+[*]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+charset = utf-8
+max_line_length = 200
+// NOTE: has auto-save impact! always.
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.txt]
+trim_trailing_whitespace = false
+insert_final_newline = false
+
+[*.{js,css}]
+insert_final_newline = true

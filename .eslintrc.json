@@ -1,0 +1,66 @@
+{
+  "env": {
+    "node": true,
+    "es6": true,
+    "mocha": true
+  },
+  "plugins": [
+    "unused-imports"
+  ],
+  // "extends": "standard-with-typescript",  MÄH, zu viel für non-typescrript, klar, and includes
+  "extends": [
+    "eslint-config-standard"
+  ],
+  // REF
+  // https://github.com/standard/eslint-config-standard/blob/80b9734d817a9babc2d02bb30cfbc98265299a00/.eslintrc.json
+  "overrides": [],
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "project": [
+      "tsconfig.json"
+    ]
+  },
+  "rules": {
+    "semi": [
+      "warn",
+      "never",
+      {
+        "beforeStatementContinuationChars": "always"
+      }
+    ],
+    "no-multiple-empty-lines": [
+      "error",
+      {
+        "max": 2,
+        "maxEOF": 0
+      }
+    ],
+    "no-lone-blocks": "error",
+    "no-extra-boolean-cast": "off",
+    "no-unused-vars": [
+      "error",
+      {
+        "vars": "local"
+      }
+    ],
+    // REF for more options: https://eslint.org/docs/latest/rules/no-unused-vars
+    "unused-imports/no-unused-imports": "off", // "error",
+    // EXAMPLE recomened this ↓, setting top-level no-unused-vars to "off"
+    "unused-imports/no-unused-vars": [
+      "warn",
+      {
+        "vars": "all",
+        "varsIgnorePattern": "^_",
+        "args": "after-used",
+        "argsIgnorePattern": "^_"
+      }
+    ],
+    "sort-imports": [
+      "error",
+      {
+        "ignoreDeclarationSort": true
+      }
+    ]
+  } // rules
+}

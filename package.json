@@ -1,0 +1,25 @@
+{
+    "name": "photo-tools",
+    "description": "a set of photo organizing scripts and tools, based on nodejs",
+    "version": "0.0.2",
+    "type": "module",
+    "scripts": {
+        "howdy": "echo 'howdy, partner'",
+        "saveloop": "clear && saveloop . ptest",
+        "test": "mocha",
+        "test:saveloop": "saveloop . 'echo ____________________________________________' 'npm t'",
+        "REFerence": "code /depot/projects/OLD_photocmd"
+    },
+    "private": true,
+    "dependencies": {
+        "commander": "^9.4.1",
+        "enquirer": "^2.3.6"
+    },
+    "devDependencies": {
+        "chai": "^4.3.7",
+        "eslint": "^8.32.0",
+        "eslint-config-standard": "^17.0.0",
+        "eslint-plugin-unused-imports": "^2.0.0",
+        "mocha": "^10.2.0"
+    }
+}

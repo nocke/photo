@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# (one can also call the js script directly
+# but node still requires it to have the .js extension
+# thus this wrap makes it a bit more comfy)
+
+scriptDir=$(dirname -- "$(readlink -f -- "$BASH_SOURCE")")
+# echo "Single run of test scenario"
+
+cd /common/images
+# clear screen REF stackoverflow.com/a/37778152
+echo -e "\e[2J\e[H"
+echo 'syncing... ====================================='
+
+rsync -rtogp --inplace --delete         \
+    /common/images/ORIG-TEST-FOLDER/    \
+	/common/images/TEST-FOLDER
+
+echo -e "\e[1A\e[2m\e[34m________________________________________________\e[0m"
+
+echo "photo (sweet nothing) ============================================"
+cd $scriptDir
+echo pwd: $PWD
+/usr/bin/node  $scriptDir/src/main.js
+echo "photo (relative dir) ============================================"
+cd $scriptDir
+echo pwd: $PWD
+/usr/bin/node  $scriptDir/src/main.js ..
+echo "photo (verbose+specific) ========================================="
+# nonsense-ish dir on purpose
+cd ~/Downloads
+echo pwd: $PWD
+/usr/bin/node  $scriptDir/src/main.js -v sanitize "/common/images/TEST-FOLDER"
+

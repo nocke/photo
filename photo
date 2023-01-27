@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# (one can also call the js script directly
+# but node still requires it to have the .js extension
+# thus this wrap makes it a bit more comfy)
+
+scriptDir=$(dirname -- "$(readlink -f -- "$BASH_SOURCE")")
+# echo arguments "$@"
+# echo "$scriptDir/_phot.js"
+/usr/bin/node "$scriptDir/src/main.js" "$@"

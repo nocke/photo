@@ -1,0 +1,91 @@
+#  BASH DEVELOPMENT STOPS here
+#  only for reference
+
+
+exit BASH DEVELOPMENT STOPS here
+
+# 
+# to ensure notify-send's through helper:
+# (prepended existence check avoids an parameterless  export (which dumps 20++ declare's))
+[[ ! -z "$CAJA_SCRIPT_CURRENT_URI" ]] && export $CAJA_SCRIPT_CURRENT_URI
+
+source /depot/script/_helper-script-II.sh NONROOT
+
+# REF create symlink in scripts folder:
+# ln -s /depot/script/util/photo-sanitize ~/.config/caja/scripts/
+
+# COULDDO  list large files beyond expected files known for that
+# ${1:-.}   use first param, currentDir otherwise
+# REF: bashali: findsuspects
+# _list='mpg|mp4|jpg|jpeg|png|cr2|raw'
+
+# (holds true for both command line and caja-script use)
+CURDIR="$(pwd)"
+
+################################################################
+# sanity checks
+################################################################
+
+# reasonable path?
+# safety/stabilty commonize ONLY in subfolder of my main folders
+# TODO PWD
+if ! [[ "$CURDIR" =~ ^/('home/frank/Pictures'|'home/frank/Downloads'|'common'|'depot'|'media/frank')/.+$ ]]; then
+  _fail "invalid folder $PWD (will only commonize in sub(!)-folder of home, drive, depot, common"
+exit
+fi
+_pass path $CURDIR okay!
+
+# reasonable size?
+_ensureMaxSize "$CURDIR" 8000 # 2 TB (yes, cards might be even larger)
+
+# no subdirs  – stackoverflow.com/a/71562230
+# except hidden ones  – askubuntu.com/a/318211
+[[ 0 -eq $(find -L "$CURDIR" -mindepth 1 -maxdepth 1 -type d -not -path '*/.*' | wc -l) ]] || _fail "there are subdirectories"
+_pass "No subdirectories"
+
+[[ 0 -eq $(find "$CURDIR" -mindepth 1 -maxdepth 1 -type f ! \( -iname \*.jpg -o -iname \*.mp4 -o -iname \*.lrf -o -iname \*.cr2 -o -iname \*.aac \) | wc -l) ]] || _fail "non DJI files here"
+
+################################################################
+# actual processing
+################################################################
+_important "photo-sanitize started..."
+
+find "$CURDIR" -type f -iregex '.*\.\(jpg\|mp4\|cr2\|tif\|png\|aac\)' -exec sh -c '
+	for file do
+		fileLC=$(echo "$file" | sed -r "s/([^.]*)\$/\L\1/")
+		# great REF on parameter expansion: stackoverflow.com/a/965069
+		fileTEMP="${file%%.*}_TEMP.${file#*.}"
+
+		#TODO wenn 'JPEG' dann nicht 'jpeg' sondern 'jpg' als Ziel
+		#TODO ebenso 'TIFF' → 'tif'
+
+		echo "$file" "$fileLC"
+
+		if [ "$file" = "$fileLC" ]; then
+			# echo "(skip already lc) $file"
+			continue
+		fi
+
+		# a little detour to make file renaming possible on case-insensitive (i.e. FAT) volumes
+		# should be very rare (only if a prior run broke)
+		if [ -f "$fileTEMP" ]; then
+			echo "(skip TEMP exists) $file"
+			continue
+		fi
+		mv "$file" "$fileTEMP"
+
+		# existing though moved out of the way (FAT ↑)?
+		if [ -f "$fileLC" ]; then
+			echo "(skip target exists) $file"
+			# ...then roll back:
+			mv "$fileTEMP" "$file"
+			continue
+		fi
+		mv "$fileTEMP" "$fileLC"
+	done
+' exec-sh {} +
+
+# trash-put, not trash-rm (!)
+find "$CURDIR" -mindepth 1 -type f -iregex '.*\.\(lrf\)' -exec trash-put "{}" ';'
+
+_important "photo-sanitize DONE"

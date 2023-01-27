@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# (one can also call the js script directly
+# but node still requires it to have the .js extension
+# thus this wrap makes it a bit more comfy)
+
+scriptDir=$(dirname -- "$(readlink -f -- "$BASH_SOURCE")")
+echo "Single run of test scenario"
+
+# https://www.baeldung.com/linux/command-execute-file-dir-change#1-bash-script-based-on-inotify
+
+inotifywait --recursive --monitor --format "%e %w%f" \
+--event modify,move,create,delete ./ \
+| while read changed; do
+    echo $changed
+	# prevent 'Text file busy' aka 'still open for writing' stackoverflow.com/a/1384594
+    sleep .2 && ./psanitize
+done 
+  
