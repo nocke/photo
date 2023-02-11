@@ -1,10 +1,7 @@
-import { assert } from 'chai'
 import '../src/config.js'
 // ↑ all tests need the omnipresent [global.]config
-// ↑ also no point in importing assertion lib time and again
 
-global.assert = assert // shorthand
-global.autoSuiteName=(name) => name.split('/test/',2)[1]
+global.autoSuiteName = (name) => name.split('/test/', 2)[1]
 
 // export const mochaHooks = {
 //   beforeEach(done) {
@@ -13,3 +10,22 @@ global.autoSuiteName=(name) => name.split('/test/',2)[1]
 //     done();
 //   }
 // }
+
+// REF stackoverflow.com/a/18543419
+global.captureStream = (stream) => {
+  const oldWrite = stream.write
+  let buf = ''
+  stream.write = function(chunk, encoding, callback) {
+    buf += chunk.toString() // chunk is a String or Buffer
+    oldWrite.apply(stream, arguments)
+  }
+
+  return {
+    unhook: function unhook() {
+      stream.write = oldWrite
+    },
+    captured: function() {
+      return buf
+    }
+  }
+}

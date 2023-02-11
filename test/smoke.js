@@ -1,37 +1,36 @@
-import path from 'path'
-
-import { argv, check, trim, ensureFails, ensureRoot, ensureString, ensureTrue, ensureFalse, ensureTruthy, fail, getInput, guard, userguard, important, info, rsyncFolder, mainWrap, iterate, pass, warn, writeFile, ensureEqual, fileCopy, getFolderSize, makeDirs, ucFirst, sleep, ensureFileOrFolderExists, ensureDirExists, ensureFileExists, getIsoDateAndTime } from '/depot/barejs/util/util.js'
-
-import sanitize from '../src/sanitize.js'
+import { ensureFolderExists, info } from '@nocke/util'
+import { assert } from 'chai'
 
 /*
-Test, if parameter calling (the wirings of Commander) is halfway reasonable
+some sanity testing and idioms
  */
 
-describe.only(autoSuiteName(import.meta.url),
-    () => {
+describe(autoSuiteName(import.meta.url),
+  () => {
 
-      describe("just some selftesting", () => {
+    describe('just some selftesting', () => {
 
-        it.skip("dump global", () => {
-          console.warn('global.config:', global.config)
-        })
+      it('config works', () => {
+        assert.equal(global.config.truth, 42, 'global.config works (with `global.`)')
+        assert.equal(config.truth, 42, 'global.config works (without `global.`)')
+      })
 
-        it("testing", () => {
-          sanitize({},'really/bad/path')
-          assert.isTrue(true)
-        })
-
-        it("basic math", () => {
-          assert.equal(1 + 1, 2, 'yeah, math works.')
-          assert.equal(global.config.truth, 42, 'global.config works (with `global.`)')
-          assert.equal(config.truth, 42, 'global.config works (without `global.`)')
-        })
-
-        it.skip("never executed", () => {
-          assert.equal(1 + 1, 42, 'Ja, that\'s wrong')
+      it('assert throws', () => {
+        assert.throws(() => {
+          assert.equal(1 + 1, 42)
         })
       })
 
+      it('“new” utils', () => {
+        console.log('Ja.')
+        info('new info')
+        ensureFolderExists('./src')
+        assert.throw(() => {
+          ensureFolderExists('./marsupilami')
+        }, 'no such')
+
+      })
+
     })
-autoSuiteName(import.meta.url)
+
+  })

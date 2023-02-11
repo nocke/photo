@@ -12,6 +12,11 @@ Desktop.ini
 
 # ts scripting now brings node_modules
 node_modules/
+coverage/
+test_dir*/
+
+# symbolic links (Ubuntu default naming) to somewhere
+Link to *
 
 # well, package-lock bores me for now...
 package-lock.json
@@ -19,10 +24,11 @@ package-lock.json
 # all hidden files/folders...
 .*
 # ... with specific exceptions
+!.eslint*
+!.babel*
+!.mocha*
 !.gitignore
 !.editorconfig
-!.babelrc
-!.mocharc*
 
 # permit specific vscode settings (stackoverflow.com/a/5534865/444255)
 !.vscode

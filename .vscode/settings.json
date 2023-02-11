@@ -5,5 +5,5 @@
 	"html.format.wrapLineLength": 200,
 
   "eslint.enable": true,
-  "editor.defaultFormatter": null,
+  "editor.defaultFormatter": null
 }

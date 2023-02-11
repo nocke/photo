@@ -1,4 +1,5 @@
 {
+  "root": true,
   "env": {
     "node": true,
     "es6": true,
@@ -7,7 +8,11 @@
   "plugins": [
     "unused-imports"
   ],
-  // "extends": "standard-with-typescript",  MÄH, zu viel für non-typescrript, klar, and includes
+  "globals": {
+    "config": "writable", // config is this projects special global variable
+    // "assert": "readonly", // config is this projects special global variable
+    "autoSuiteName": "readonly" // config is this projects special global variable
+  },
   "extends": [
     "eslint-config-standard"
   ],
@@ -32,27 +37,34 @@
     "no-multiple-empty-lines": [
       "error",
       {
-        "max": 2,
+        "max": 3,
         "maxEOF": 0
       }
     ],
-    "no-lone-blocks": "error",
-    "no-extra-boolean-cast": "off",
-    "no-unused-vars": [
+    "space-before-function-paren": [
       "error",
+      "never"
+    ],
+    "no-lone-blocks": "error",
+    "padded-blocks": "off",
+    "no-extra-boolean-cast": "off",
+    "quotes": [
+      "error",
+      "single",
       {
-        "vars": "local"
+        "allowTemplateLiterals": true
       }
     ],
     // REF for more options: https://eslint.org/docs/latest/rules/no-unused-vars
-    "unused-imports/no-unused-imports": "off", // "error",
-    // EXAMPLE recomened this ↓, setting top-level no-unused-vars to "off"
+    "no-unused-vars": "off", // (often nice to have imports around at devtime)
+    // EXAMPLE recommended this ↓, setting top-level no-unused-vars to "off"
+    "unused-imports/no-unused-imports": "off",
     "unused-imports/no-unused-vars": [
       "warn",
       {
         "vars": "all",
-        "varsIgnorePattern": "^_",
         "args": "after-used",
+        "varsIgnorePattern": "^_",
         "argsIgnorePattern": "^_"
       }
     ],

@@ -1,15 +1,23 @@
 #!/usr/bin/env node
+
 'use strict'
 import path from 'path'
 import fs from 'fs'
 
+import { ESLint } from 'eslint'
+// REF https://eslint.org/docs/latest/integrate/nodejs-api
+
 const foldersToIterate = ['src', 'test']
 const fileRegex = /\.(?:js|ts|json)$/
 
-// TODO actual sanitizing not yet happening
+const eslint = new ESLint({ fix: true })
+// REF https://eslint.org/docs/latest/integrate/nodejs-api#-eslintlintfilespatterns
 
-const treat = (file) => {
-  console.log(`treating file ${file}`)
+const treat = async (filePath) => {
+  console.log(`treating file ${filePath}`)
+
+  const results = await eslint.lintFiles(filePath)
+  await ESLint.outputFixes(results)
 }
 
 try {

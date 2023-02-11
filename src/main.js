@@ -4,14 +4,17 @@
 import { execSync } from 'child_process'
 import { existsSync, readFileSync } from 'fs'
 import path from 'path'
-import sanitize from './sanitize.js'
+import sanitize from './commands/sanitize.js'
 
 import './config.js'
 
-import { argv, blue, check, ensureDirExists, ensureEqual, ensureFails, ensureFalse, ensureFileExists, ensureFileOrFolderExists, ensureRoot, ensureString, ensureTrue, ensureTruthy, fail, fileCopy, getFolderSize, getInput, getIsoDateAndTime, green, guard, important, info, iterate, mainWrap, makeDirs, pass, red, rsyncFolder, sleep, trim, ucFirst, userguard, validateOptions, warn, writeFile, yellow } from '../../barejs/util/util.js'
+import { argv, blue, check, ensureFolderExists, ensureEqual, ensureFails, ensureFalse, ensureFileExists, ensureFileOrFolderExists, ensureRoot, ensureString, ensureTrue, ensureTruthy, fail, fileCopy, getFolderSize, getInput, getIsoDateAndTime, green, guard, important, info, iterate, mainWrap, makeDirs, pass, purple, red, rsyncFolder, sleep, trim, ucFirst, userguard, validateOptions, warn, writeFile, yellow } from '@nocke/util'
 
 import { Command } from 'commander'
-warn(config)
+import TestDad from './commands/TestDad.js'
+import { sonFoo } from './commands/testSon.js'
+// DEBUG  info(purple(config))
+
 const program = new Command()
 
 // grab version from package.json
@@ -23,9 +26,12 @@ info(`photo v${pkg.version}`)
 
 // DEBUG info(JSON.stringify(argv))
 
+warn(purple(process.argv.join('  ')))
+
 program
   .version(pkg.version)
   .option('-v, --verbose', 'log more details')
+  .option('-l, --live', 'do it (all else is dry-run')
   .on('option:verbose', () => {
     info('TODO: higher verbosity')
     // global.app.verbose = true

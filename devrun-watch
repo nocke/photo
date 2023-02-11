@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
-# (one can also call the js script directly
+
+# (yes one can also call the js script directly
 # but node still requires it to have the .js extension
 # thus this wrap makes it a bit more comfy)
+
+# does not use the (elsewhere stored) 'saveloop'
 
 scriptDir=$(dirname -- "$(readlink -f -- "$BASH_SOURCE")")
 echo "Single run of test scenario"
@@ -9,10 +12,9 @@ echo "Single run of test scenario"
 # https://www.baeldung.com/linux/command-execute-file-dir-change#1-bash-script-based-on-inotify
 
 inotifywait --recursive --monitor --format "%e %w%f" \
---event modify,move,create,delete ./ \
-| while read changed; do
+  --event modify,move,create,delete  --exclude 'node_modules'  ./ |
+  while read changed; do
     echo $changed
-	# prevent 'Text file busy' aka 'still open for writing' stackoverflow.com/a/1384594
-    sleep .2 && ./psanitize
-done 
-  
+    # sleep prevents 'Text file busy' aka 'still open for writing' stackoverflow.com/a/1384594
+    sleep .2 && ./devrun
+  done
