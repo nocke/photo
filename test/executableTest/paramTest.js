@@ -15,14 +15,11 @@ describe(autoSuiteName(
     assert(r.includes('Usage:', 'help does not contain \'Usage:\''), 'help string sanity test')
   })
 
-  it.skip /*TODO*/('regular sanitize run', () => {
+  it.skip /* TODO */('regular sanitize run', () => {
     // yes, this may run on the ORIG folder, as I am not going live...
     const r = guard('./photo -v sanitize ../../../common/images/TEST-FOLDER', { mute: true })
     assert(r.includes('Usage:', 'help does not contain \'Usage:\''), 'help string sanity test')
   })
-
-
-
 
 
   // negative testing

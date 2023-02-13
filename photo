@@ -6,4 +6,6 @@
 scriptDir=$(dirname -- "$(readlink -f -- "$BASH_SOURCE")")
 # echo arguments "$@"
 # echo "$scriptDir/_phot.js"
-/usr/bin/node "$scriptDir/src/main.js" "$@"
+
+# (cannot dictate /usr/bin for github workflows)
+node "$scriptDir/src/main.js" "$@"

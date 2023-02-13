@@ -8,6 +8,11 @@ Stuff, the sanitze command does:
   * same corename, where corename is a little tighter defined than the usual basename (fileName before extension)
 * deleting „lonely“ RAWs (after the l)
 
+NEXT: a download command to 'leech' from configured, “known” sd card location and copy to incoming location (+sanitation ↑)
+
+## status
+
+[![build status](https://github.com/nocke/photo/actions/workflows/ci.yml/badge.svg)](https://github.com/nocke/photo/actions/workflows/ci.yml?query=branch%3Amaster)
 
 ## „Devrun” for development
 
