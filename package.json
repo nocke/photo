@@ -10,6 +10,7 @@
     "devrun:loop": "saveloop . clear ./devrun",
     "lint": "eslint src test",
     "lint:fixall": "./script/lint-all.js",
+    "lint:fixall2": "eslint src/**/*.js test/**/*.js --fix",
     "syncTestdata": "./sync-testfiles",
     "test": "mocha --loader=esmock",
     "test-util:loop": "saveloop /depot/PUBLIC/@nocke/util/ clear 'npm t'",

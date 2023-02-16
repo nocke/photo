@@ -1,6 +1,6 @@
 'use strict'
 
-import { argv, check, ensureFolderExists, ensureEqual, ensureFails, ensureFalse, ensureFileExists, ensureFileOrFolderExists, ensureRoot, ensureString, ensureTrue, ensureTruthy, fail, fileCopy, getFolderSize, getInput, getIsoDateAndTime, green, guard, important, info, iterate, mainWrap, makeDirs, pass, purple, rsyncFolder, sleep, trim, ucFirst, userguard, warn, writeFile } from '@nocke/util'
+import { argv, check, ensureEqual, ensureFails, ensureFalse, ensureFileExists, ensureFileOrFolderExists, ensureFolderExists, ensureRoot, ensureString, ensureTrue, ensureTruthy, fail, fileCopy, getFolderSize, getInput, getIsoDateAndTime, green, guard, important, info, iterate, mainWrap, makeDirs, pass, purple, rsyncFolder, sleep, trim, ucFirst, userguard, warn, writeFile } from '@nocke/util'
 import Member from './Member.js'
 
 
@@ -17,7 +17,7 @@ export default class Family {
   add(member) {
     ensureTrue(member instanceof Member, 'can only add Members as member')
     ensureTrue(member.core === this.core)
-    ensureTrue(member.dir.substring(0, 1) === '/','path is not absolute')
+    ensureTrue(member.dir.substring(0, 1) === '/', 'path is not absolute')
     // fully qualified absolute path incl. extension as unique key here
     ensureTrue(!this.members.has(member.fileName), `double filename '${member.fileName}'`)
 
@@ -43,7 +43,6 @@ export default class Family {
   /* basically all files, except video files (precaution, since no use case) */
   getLonelyMembers = () => (this.hasLoneleyRaw() ? this.getAllMembers() : [])
     .filter(m => m.isRaw || m.isSidecar)
-
 
 
   dump() {

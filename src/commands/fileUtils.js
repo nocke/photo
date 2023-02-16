@@ -17,14 +17,13 @@ import trash from 'trash'
 import { ensureFalse, ensureTrue, warn } from '@nocke/util'
 
 export const deleteFile = async(absPath, live, verbose, reason) => {
+
   ensureTrue(live !== undefined && verbose !== undefined && reason !== undefined, 'must specify all parameters')
   ensureTrue(absPath.startsWith('/'), `not an absolute path '${absPath}'`)
   ensureFalse(absPath.includes('*'), `no wildcards allowed in '${absPath}'`)
 
-  warn('Yo!***************************')
   verbose && warn(`delete file '${reason}':`, absPath)
   live && await trash([absPath])
-
 
 }
 
