@@ -28,8 +28,3 @@ if [ $? -ne 0 ]; then
   echo "Error: Differences found between $SRC and $DEST"
   exit 1
 fi
-
-
-# rsync -rtogp --exclude='.git' --inplace --delete \
-#   /common/images/ORIG-TEST-FOLDER/ \
-#   /common/images/TEST-FOLDER

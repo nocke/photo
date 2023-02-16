@@ -17,8 +17,6 @@ describe(autoSuiteName(
     })
   })
 
-
-
   // negative testing ===============================
 
   it('negative: inacceptable path', () => {

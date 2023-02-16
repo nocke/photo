@@ -13,7 +13,7 @@
       "args": [
         "-v",
         "sanitize",
-        "../../../common/images/TEST-FOLDER"
+        "${workspaceFolder}/TEST-FOLDER"
       ],
       "cwd": "${workspaceFolder}"
     },

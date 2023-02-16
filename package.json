@@ -8,6 +8,7 @@
     "clean": "rimraf node_modules/",
     "devrun": "clear && ./devrun",
     "devrun:loop": "saveloop . clear ./devrun",
+    "lint": "eslint src test",
     "lint:fixall": "./script/lint-all.js",
     "syncTestdata": "./sync-testfiles",
     "test": "mocha --loader=esmock",

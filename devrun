@@ -24,8 +24,4 @@ echo -e "\e[1A\e[2m\e[34m________________________________________________\e[0m"
 # /usr/bin/node $scriptDir/src/main.js ..
 
 echo "photo (verbose+specific) ========================================="
-# nonsense-ish dir on purpose
-cd ~/Downloads
-echo pwd: $PWD
-# ../../../  =  leaving Downloads, frank, home...
-/usr/bin/node $scriptDir/src/main.js -v -l sanitize "../../../common/images/TEST-FOLDER"
+/usr/bin/node $scriptDir/src/main.js -v -l sanitize "$PWD/TEST-FOLDER"

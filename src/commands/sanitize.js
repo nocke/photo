@@ -2,7 +2,7 @@
 
 import fs, { readFileSync } from 'fs'
 import path from 'path'
-import { argv, check, ensureFolderExists, ensureEqual, ensureFails, ensureFalse, ensureFileExists, ensureFileOrFolderExists, ensureRoot, ensureString, ensureTrue, ensureTruthy, fail, fileCopy, getFolderSize, getInput, getIsoDateAndTime, green, guard, important, info, iterate, mainWrap, makeDirs, pass, purple, red, rsyncFolder, sleep, trim, ucFirst, userguard, warn, writeFile } from '@nocke/util'
+import { argv, check, ensureEqual, ensureFails, ensureFalse, ensureFileExists, ensureFileOrFolderExists, ensureFileOrFolderOrLinkExists, ensureFolderExists, ensureRoot, ensureString, ensureTrue, ensureTruthy, fail, fileCopy, getFolderSize, getInput, getIsoDateAndTime, green, guard, important, info, isFile, iterate, mainWrap, makeDirs, pass, purple, red, rsyncFolder, sleep, trim, ucFirst, userguard, warn, writeFile } from '@nocke/util'
 import { ensureAcceptablePath } from '../common/utils.js'
 import modelUtils, { getCoreAndExt } from '../model/modelUtils.js'
 import Family from '../model/Family.js'
@@ -31,21 +31,24 @@ export default (opts, filePath = '.') => {
   // --------------------------------------------------
   // Parse Files into families and members
   // --------------------------------------------------
-  // so far filePath(s) ist just shallo fileNam(s), no recursion into subfolders yet
+  // filePath(s) ist just shallow fileNam(s), no recursion into subfolders yet
   for (const filePath of filePaths) {
     const absFilePath = absDirPath + '/' + filePath
-    ensureFileExists(absFilePath)
-    const { core, fileName, extSan } = getCoreAndExt(absFilePath)
-    ensureEqual(filePath, fileName, 'sanity')
+    ensureFileOrFolderOrLinkExists(absFilePath)
 
-    if ( // leave alone...
-      ['.', '~'].includes(fileName.substring(0, 1)) || // ...hidden and temp files
-      extSan === '' // ...irrelevant files
-    ) {
-      verbose && warn(`skipping ${fileName}`)
+    if (!isFile(absFilePath)) {
       continue
     }
 
+    const { core, fileName, extSan } = getCoreAndExt(absFilePath)
+    ensureEqual(filePath, fileName, 'sanity') // ‘roundtrip’ sanity
+
+    if ( // leave alone...
+      ['.', '~'].includes(fileName.substring(0, 1)) || // ...hidden and temp files
+      extSan === '' // ...irrelevant files ( COULDDO: `mimetype` one day)
+    ) {
+      continue
+    }
 
     // basename taken as core for “Singles”
     // open new Family if needed
@@ -111,6 +114,6 @@ export default (opts, filePath = '.') => {
 
   info(
     `stats: \n`,
-    stats, `\n`  // TODO: this is nicely testable!
+    stats, `\n` // TODO: this is nicely testable!
   )
 }
