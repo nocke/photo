@@ -3,9 +3,33 @@
 # but node still requires it to have the .js extension
 # thus this wrap makes it a bit more comfy)
 
-cd /common/images
+# cd /common/images
 echo 'syncing... ====================================='
 
-rsync -rtogp --exclude='.git' --inplace --delete \
-  /common/images/ORIG-TEST-FOLDER/ \
-  /common/images/TEST-FOLDER
+SRC="$PWD/node_modules/photo-testfiles/ørig"
+DEST="$PWD/TEST-FOLDER"
+
+if [ ! -d "$SRC" ]; then
+  echo "\nError: testfile source directory $SRC does not exist, did you do ‘npm install’?"
+  exit 1
+fi
+
+rsync -rtogp --exclude='.git' --inplace --delete "$SRC/" "$DEST"
+
+if [ $? -ne 0 ]; then
+  echo "Error: rsync operation failed"
+  exit 1
+fi
+
+diff -rq "$SRC" "$DEST"
+
+# Check if there are any differences
+if [ $? -ne 0 ]; then
+  echo "Error: Differences found between $SRC and $DEST"
+  exit 1
+fi
+
+
+# rsync -rtogp --exclude='.git' --inplace --delete \
+#   /common/images/ORIG-TEST-FOLDER/ \
+#   /common/images/TEST-FOLDER
