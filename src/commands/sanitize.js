@@ -1,25 +1,25 @@
 'use strict'
 
-import fs, { readFileSync } from 'fs'
+import fs from 'fs'
 import path from 'path'
-import { argv, check, ensureEqual, ensureFails, ensureFalse, ensureFileExists, ensureFileOrFolderExists, ensureFileOrFolderOrLinkExists, ensureFolderExists, ensureRoot, ensureString, ensureTrue, ensureTruthy, fail, fileCopy, getFolderSize, getInput, getIsoDateAndTime, green, guard, important, info, isFile, iterate, mainWrap, makeDirs, pass, purple, red, rsyncFolder, sleep, trim, ucFirst, userguard, warn, writeFile } from '@nocke/util'
+import { ensureEqual, ensureFileOrFolderOrLinkExists, ensureFolderExists, ensureTrue, important, info, isFile, purple, warn } from '@nocke/util'
 import { ensureAcceptablePath } from '../common/utils.js'
-import modelUtils, { getCoreAndExt } from '../model/modelUtils.js'
+import { getCoreAndExt } from '../model/modelUtils.js'
 import Family from '../model/Family.js'
 import Member from '../model/Member.js'
-import fileUtils, { renameFile } from './fileUtils.js'
+import fileUtils from './fileUtils.js'
 
 export default (opts, filePath = '.') => {
-  info('COMMAND Sanitize ===============')
-
   // DEBUG info('options: ', opts)
   // eslint-disable-next-line unused-imports/no-unused-vars
   const live = !!opts.live
   // eslint-disable-next-line unused-imports/no-unused-vars
   const verbose = !!opts.verbose
 
+  verbose && info('COMMAND Sanitize ===============')
+
   const absDirPath = path.resolve(filePath)
-  info(`absPath: ${absDirPath}`)
+  // DEBUG info(`absPath: ${absDirPath}`)
   ensureTrue(absDirPath.startsWith('/'), `not an absolute path ${absDirPath}`)
 
   ensureAcceptablePath(absDirPath)
@@ -43,9 +43,11 @@ export default (opts, filePath = '.') => {
     const { core, fileName, extSan } = getCoreAndExt(absFilePath)
     ensureEqual(filePath, fileName, 'sanity') // ‘roundtrip’ sanity
 
+    important(absFilePath, '   ---   ', purple(core, fileName, extSan, extSan === ''))
     if ( // leave alone...
       ['.', '~'].includes(fileName.substring(0, 1)) || // ...hidden and temp files
-      extSan === '' // ...irrelevant files ( COULDDO: `mimetype` one day)
+      extSan === '' // ...extensionless files( COULDDO: `mimetype` one day)
+      // ↑ and thereby also irrelevant files (which do not get an extSan)
     ) {
       continue
     }
@@ -82,13 +84,15 @@ export default (opts, filePath = '.') => {
   warn('------------------------------------')
 
   families.forEach((family /*, core */) => {
-    verbose && important(`*** ${family.core}(${family.members.size})`)
+    verbose && important(`Family ${family.core}(${family.members.size})`)
+    let dirty = false
 
     // 1) prune lonely RAWs (and lonely sidecars!)
     if (family.hasLoneleyRaw()) {
       family.getLonelyMembers().forEach(m => {
         fileUtils.deleteFile(m.dir + '/' + m.fileName, live, verbose, 'lonely')
         stats.lonelyDeleted++
+        dirty = true
         family.remove(m)
       })
     }
@@ -97,6 +101,7 @@ export default (opts, filePath = '.') => {
     family.getCruftMembers().forEach(m => {
       fileUtils.deleteFile(m.dir + '/' + m.fileName, live, verbose, 'cruft')
       stats.cruftRemoved++
+      dirty = true
       family.remove(m)
     })
 
@@ -108,8 +113,11 @@ export default (opts, filePath = '.') => {
       if (srcName !== destName) {
         fileUtils.renameFile(absDirPath, srcName, destName, live, verbose, 'sanitation rename')
         stats.filesRenamed++
+        dirty = true
       }
     })
+
+    !dirty && verbose && info(`(unchanged)`)
   })
 
   info(
