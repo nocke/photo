@@ -47,10 +47,16 @@ describe(autoSuiteName(
     const absDirPath1 = path.resolve(testFile1)
     const absDirPath2 = path.resolve(testFile2)
 
-    console.log(absDirPath1)
+    // console.log(absDirPath1)
 
-    await fileUtils.deleteFile(absDirPath1, true, true, 'testing...')
-    await fileUtils.deleteFile(absDirPath2, true, true, 'testing...')
+    await fileUtils.deleteFile(absDirPath1, false, false, 'testing not live ...')
+    await fileUtils.deleteFile(absDirPath2, false, false, 'testing not live ...')
+
+    assert(fs.existsSync(testFile1), 'testFile1 deleted despite non-live')
+    assert(fs.existsSync(testFile2), 'testFile2 deleted despite non-live')
+
+    await fileUtils.deleteFile(absDirPath1, true, false, 'testing...')
+    await fileUtils.deleteFile(absDirPath2, true, false, 'testing...')
 
     assert(!fs.existsSync(testFile1), 'testFile1 not deleted')
     assert(!fs.existsSync(testFile2), 'testFile2 not deleted')
