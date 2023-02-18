@@ -9,6 +9,13 @@ describe(autoSuiteName(
   import.meta.url),
 () => {
   it('help string sanity test', () => {
+    const r = guard('./photo', { mute: true })
+    assert(r.includes('help for help'), 'just brief message on parameterless')
+    const numNewLines = r.split('\n').length - 1
+    assert.isBelow(numNewLines, 6, `parameterless \`photo\` should only yield version and one-line help message`)
+  })
+
+  it('help string sanity test', () => {
     const r = guard('./photo --help', { mute: true })
     assert(r.includes('Usage:'), 'help does not contain \'Usage:\'')
   })

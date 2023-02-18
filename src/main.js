@@ -8,7 +8,7 @@ import sanitize from './commands/sanitize.js'
 
 import './config.js'
 
-import { argv, blue, check, ensureFolderExists, ensureEqual, ensureFails, ensureFalse, ensureFileExists, ensureFileOrFolderExists, ensureRoot, ensureString, ensureTrue, ensureTruthy, fail, fileCopy, getFolderSize, getInput, getIsoDateAndTime, green, guard, important, info, iterate, mainWrap, makeDirs, pass, purple, red, rsyncFolder, sleep, trim, ucFirst, userguard, validateOptions, warn, writeFile, yellow } from '@nocke/util'
+import { argv, blue, check, ensureEqual, ensureFails, ensureFalse, ensureFileExists, ensureFileOrFolderExists, ensureFolderExists, ensureRoot, ensureString, ensureTrue, ensureTruthy, fail, fileCopy, getFolderSize, getInput, getIsoDateAndTime, green, guard, important, info, iterate, mainWrap, makeDirs, pass, purple, red, rsyncFolder, sleep, trim, ucFirst, userguard, validateOptions, warn, writeFile, yellow } from '@nocke/util'
 
 import { Command } from 'commander'
 import TestDad from './commands/TestDad.js'
@@ -23,10 +23,6 @@ const pkg = JSON.parse(
     import.meta.url))
 )
 info(`photo v${pkg.version}`)
-
-// DEBUG info(JSON.stringify(argv))
-
-warn(purple(process.argv.join('  ')))
 
 program
   .version(pkg.version)
@@ -46,13 +42,19 @@ program
     ].join('\n'))
   })
 
+
 program
   .command('sanitize', null, { isDefault: true }) // do not use description (would mean standalone)
   .argument('[path]', 'path, otherwise default path assumed')
   .action((path) => sanitize(program.opts(), path))
 
 try {
-  await program.parseAsync()
+  // if no parameters whatsoever, just output (after above version ↑) short help notice
+  if (argv.length === 0) {
+    info(`  use --help for help\n`)
+  } else {
+    await program.parseAsync()
+  }
 } catch (error) {
   const stackTrace = error.stack
   if (!!program.opts().verbose) {
