@@ -1,6 +1,10 @@
+[![build status](https://github.com/nocke/photo/actions/workflows/ci.yml/badge.svg)](https://github.com/nocke/photo/actions/workflows/ci.yml?query=branch%3Amaster)
 # photo tools
 
-at its heart, a set of photography files sorting loging, accessible through a cli command `photo`.
+at its heart, a cli command `photo`
+• for sanitizing, renaming and deleting photo and video files
+• next: smart command-line importing
+• next: rating based deletion of “unselected takes“ and company
 
 Stuff, the sanitze command does:
 
@@ -8,9 +12,7 @@ Stuff, the sanitze command does:
   * same corename, where corename is a little tighter defined than the usual basename (fileName before extension)
 * deleting „lonely“ RAWs (after the l)
 
-NEXT: a download command to 'leech' from configured, “known” sd card location and copy to incoming location (+sanitation ↑)
-
-## enabling
+## integration
 
 There will one day be more elegant ways, but for now I suggest adding a bash file to your `~/bin` folder named `photo` and `chmod u+x` it, as a redirection script:
 
@@ -19,10 +21,6 @@ There will one day be more elegant ways, but for now I suggest adding a bash fil
 
 node "/depot/PUBLIC/@nocke/photo/src/main.js" "$@"
 ```
-
-## status
-
-[![build status](https://github.com/nocke/photo/actions/workflows/ci.yml/badge.svg)](https://github.com/nocke/photo/actions/workflows/ci.yml?query=branch%3Amaster)
 
 ## „Devrun” for development
 
