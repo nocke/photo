@@ -22,8 +22,6 @@ describe(autoSuiteName(import.meta.url),
       })
 
       it('“new” utils', () => {
-        console.log('Ja.')
-        info('new info')
         ensureFolderExists('./src')
         assert.throw(() => {
           ensureFolderExists('./marsupilami')

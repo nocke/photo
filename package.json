@@ -1,6 +1,6 @@
 {
   "name": "photo-tools",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "description": "a set of photo organizing scripts and tools, based on nodejs",
   "type": "module",
@@ -18,7 +18,7 @@
     "test:loop": "saveloop . clear \"npm t $npm_config_test\""
   },
   "dependencies": {
-    "@nocke/util": "^0.0.2",
+    "@nocke/util": "^0.0.6",
     "commander": "^9.4.1",
     "enquirer": "^2.3.6",
     "trash": "^8.1.1"
