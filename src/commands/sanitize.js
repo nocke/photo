@@ -43,7 +43,7 @@ export default (opts, filePath = '.') => {
     const { core, fileName, extSan } = getCoreAndExt(absFilePath)
     ensureEqual(filePath, fileName, 'sanity') // ‘roundtrip’ sanity
 
-    important(absFilePath, '   ---   ', purple(core, fileName, extSan, extSan === ''))
+    // DEBUG important(absFilePath, '   ---   ', purple(core, fileName, extSan, extSan === ''))
     if ( // leave alone...
       ['.', '~'].includes(fileName.substring(0, 1)) || // ...hidden and temp files
       extSan === '' // ...extensionless files( COULDDO: `mimetype` one day)
@@ -65,7 +65,7 @@ export default (opts, filePath = '.') => {
   }
 
   // --------------------------------------------------
-  warn('execute sanitation ( dry or live ) ============')
+  verbose && info('execute sanitation ( dry or live ) ============')
   // --------------------------------------------------
 
   const stats = {
@@ -79,9 +79,7 @@ export default (opts, filePath = '.') => {
   //   family.dump()
   // })
 
-  important('execute pruning')
-  warn('------------------------------------')
-  warn('------------------------------------')
+  verbose && info('execute pruning')
 
   families.forEach((family /*, core */) => {
     verbose && important(`Family ${family.core}(${family.members.size})`)
@@ -124,4 +122,6 @@ export default (opts, filePath = '.') => {
     `stats: \n`,
     stats, `\n` // TODO: this is nicely testable!
   )
+
+  !live && info('done dry-run. use `--live` to actually perform deletion')
 }

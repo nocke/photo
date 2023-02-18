@@ -29,9 +29,8 @@ export const deleteFile = async(absPath, live, verbose, reason) => {
 
 export const renameFile = (dir, srcName, destName, live, verbose, reason) => {
   verbose && warn(`rename file '${reason}':`, dir + '/' + srcName, ' →to→ ', dir + '/' + destName)
-  fs.renameSync(dir + '/' + srcName, dir + '/' + destName)
+  live && fs.renameSync(dir + '/' + srcName, dir + '/' + destName)
 }
-
 
 export default {
   deleteFile,

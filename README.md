@@ -10,6 +10,16 @@ Stuff, the sanitze command does:
 
 NEXT: a download command to 'leech' from configured, “known” sd card location and copy to incoming location (+sanitation ↑)
 
+## enabling
+
+There will one day be more elegant ways, but for now I suggest adding a bash file to your `~/bin` folder named `photo` and `chmod u+x` it, as a redirection script:
+
+```bash
+#!/usr/bin/env bash
+
+node "/depot/PUBLIC/@nocke/photo/src/main.js" "$@"
+```
+
 ## status
 
 [![build status](https://github.com/nocke/photo/actions/workflows/ci.yml/badge.svg)](https://github.com/nocke/photo/actions/workflows/ci.yml?query=branch%3Amaster)
@@ -52,7 +62,7 @@ also (easier to autocomplete resp. lazier...)
 
 ----
 
-## Debugging
+## debugging
 
 Project has a [.vscode/launch.json](.vscode/launch.json) launch config.
 
