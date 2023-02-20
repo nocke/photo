@@ -7,7 +7,7 @@
   "scripts": {
     "clean": "rimraf node_modules/",
     "devrun": "clear && ./devrun",
-    "devrun:loop": "saveloop . clear ./devrun",
+    "devrun:loop": "./script/saveloop . clear ./devrun",
     "lint": "eslint src test",
     "lint:fixall": "./script/lint-all.js",
     "lint:fixall2": "eslint src/**/*.js test/**/*.js --fix",
@@ -15,8 +15,8 @@
     "relink": "./script/relink",
     "checklinks": "./script/checklinks",
     "test": "mocha --loader=esmock",
-    "test-util:loop": "saveloop /depot/PUBLIC/@nocke/util/ clear 'npm t'",
-    "test:loop": "saveloop . clear \"npm t $npm_config_test\""
+    "test-util:loop": "./script/saveloop /depot/PUBLIC/@nocke/util/ clear 'npm t'",
+    "test:loop": "./script/saveloop . clear \"npm t $npm_config_test\""
   },
   "dependencies": {
     "@nocke/util": "^0.0.6",
