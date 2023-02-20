@@ -12,7 +12,8 @@
     "lint:fixall": "./script/lint-all.js",
     "lint:fixall2": "eslint src/**/*.js test/**/*.js --fix",
     "syncTestdata": "./sync-testfiles",
-    "relink": "npm link photo-testfiles && npm link @nocke/util && ls -lar `npm config get prefix`/lib/node_modules `npm config get prefix`/lib/node_modules/@nocke",
+    "relink": "./script/relink",
+    "checklinks": "./script/checklinks",
     "test": "mocha --loader=esmock",
     "test-util:loop": "saveloop /depot/PUBLIC/@nocke/util/ clear 'npm t'",
     "test:loop": "saveloop . clear \"npm t $npm_config_test\""

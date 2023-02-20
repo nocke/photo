@@ -1,11 +1,16 @@
 #!/usr/bin/env bash
 
 # don't look up online, don't save (which mutually destrodys the local npm link)
-npm link photo-testfiles    --no-save --no-package-lock --no-shrinkwrap
-npm link @nocke/util        --no-save --no-package-lock --no-shrinkwrap
+if ! [ -L node-modules/@nocke/util ] && ! [ -d node-modules/@nocke/util ]; then
+  echo -e '\nrecreating link for @nocke/util'
+  # too slow npm link @nocke/util    --no-save --no-package-lock --no-shrinkwrap
+  ln -snf "`npm config get prefix`/lib/node_modules/@nocke/util" ./node_modules/@nocke/util
+fi
 
-echo '\nshow local → npm-global (expected: 2 entries)'
-ls -lar ./node_modules/ ./node_modules/@nocke | grep '../'
+if ! [ -L node-modules/photo-testfiles ] && ! [ -d node-modules/photo-testfiles ]; then
+  echo -e '\nrecreating link for photo-testfiles'
+  # too slow:  npm link photo-testfiles    --no-save --no-package-lock --no-shrinkwrap
+  ln -snf "`npm config get prefix`/lib/node_modules/photo-testfiles" ./node_modules/photo-testfiles
+fi
 
-echo -e '\nshow npm-global →  target'
-ls -lar `npm config get prefix`/lib/node_modules `npm config get prefix`/lib/node_modules/@nocke | grep '../'
+./script/checklinks
