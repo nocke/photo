@@ -22,7 +22,7 @@ describe(autoSuiteName(
   it('negative: inacceptable path', () => {
     assert.throws(
       () => {
-        sanitize({}, '/really/bad/path')
+        sanitize({}, ['/really/bad/path'])
       },
       'not an acceptable path' // words that need to be contained in exception thrown
     )
@@ -31,7 +31,7 @@ describe(autoSuiteName(
   it('negative: non-existing path', () => {
     assert.throws(
       () => {
-        sanitize({}, '/media/notanexistingfolderhere671056710')
+        sanitize({}, ['/media/notanexistingfolderhere671056710'])
       },
       'no such directory'
     )

@@ -1,18 +1,14 @@
 #!/usr/bin/env node
 'use strict'
 
-import { execSync } from 'child_process'
-import { existsSync, readFileSync } from 'fs'
-import path from 'path'
+import { readFileSync } from 'fs'
 import sanitize from './commands/sanitize.js'
 
 import './config.js'
 
-import { argv, blue, check, ensureEqual, ensureFails, ensureFalse, ensureFileExists, ensureFileOrFolderExists, ensureFolderExists, ensureRoot, ensureString, ensureTrue, ensureTruthy, fail, fileCopy, getFolderSize, getInput, getIsoDateAndTime, green, guard, important, info, iterate, mainWrap, makeDirs, pass, purple, red, rsyncFolder, sleep, trim, ucFirst, userguard, validateOptions, warn, writeFile, yellow } from '@nocke/util'
+import { argv, green, info, warn } from '@nocke/util'
 
 import { Command } from 'commander'
-import TestDad from './commands/TestDad.js'
-import { sonFoo } from './commands/testSon.js'
 // DEBUG  info(purple(config))
 
 const program = new Command()
@@ -28,6 +24,8 @@ program
   .version(pkg.version)
   .option('-v, --verbose', 'log more details')
   .option('-l, --live', 'do it (all else is dry-run')
+  .option('-s, --stats', 'force stats')
+  .option('-n, --no-stats', 'force no stats')
   .on('option:verbose', () => {
     info('TODO: higher verbosity')
     // global.app.verbose = true
@@ -45,8 +43,14 @@ program
 
 program
   .command('sanitize', null, { isDefault: true }) // do not use description (would mean standalone)
-  .argument('[path]', 'path, otherwise default path assumed')
-  .action((path) => sanitize(program.opts(), path))
+  .argument('<paths...>', 'paths')
+  .action((paths, opts) => {
+    warn('FYI paths:', paths)
+    warn('FYI opts:', opts)
+    sanitize(program.opts(), paths)
+  }
+
+  )
 
 try {
   // if no parameters whatsoever, just output (after above version ↑) short help notice

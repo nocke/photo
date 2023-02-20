@@ -26,6 +26,7 @@ function() {
   })
 
   it('perform sanitize - not live', () => {
+    // stats on by default
     const r = guard(`./photo sanitize ${testfolder}`, { mute: true })
     // DEBUG info(r)
 
@@ -43,7 +44,8 @@ function() {
 
   it('perform sanitize - verbose, live', () => {
 
-    const r = guard(`./photo sanitize -v -l ${testfolder}`, { mute: true })
+    // `-s` → need stats!
+    const r = guard(`./photo sanitize -vsl ${testfolder}`, { mute: true })
     // DEBUG info(purple(r))
 
     // assert certain stats output

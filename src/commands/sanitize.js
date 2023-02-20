@@ -9,16 +9,24 @@ import Family from '../model/Family.js'
 import Member from '../model/Member.js'
 import fileUtils from './fileUtils.js'
 
-export default (opts, filePath = '.') => {
+export default (opts, folderPaths) => {
   // DEBUG info('options: ', opts)
+
+  // TODO
+  ensureTrue(folderPaths.length === 1, 'currently only 1 path supported')
+  const folderPath = folderPaths[0]
+  info('folderPath: ', folderPath)
+
   // eslint-disable-next-line unused-imports/no-unused-vars
   const live = !!opts.live
   // eslint-disable-next-line unused-imports/no-unused-vars
   const verbose = !!opts.verbose
+  // by default: show stats on dry run, not on live
+  const showStats = (opts.stats === undefined) ? !live : opts.stats
 
   verbose && info('COMMAND Sanitize ===============')
 
-  const absDirPath = path.resolve(filePath)
+  const absDirPath = path.resolve(folderPath)
   // DEBUG info(`absPath: ${absDirPath}`)
   ensureTrue(absDirPath.startsWith('/'), `not an absolute path ${absDirPath}`)
 
@@ -118,7 +126,7 @@ export default (opts, filePath = '.') => {
     !dirty && verbose && info(`(unchanged)`)
   })
 
-  info(
+  showStats && info(
     `stats: \n`,
     stats, `\n` // TODO: this is nicely testable!
   )
