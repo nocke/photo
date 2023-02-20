@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+# don't look up online, don't save (which mutually destrodys the local npm link)
+npm link photo-testfiles    --no-save --no-package-lock --no-shrinkwrap
+npm link @nocke/util        --no-save --no-package-lock --no-shrinkwrap
+
+echo '\nshow local → npm-global (expected: 2 entries)'
+ls -lar ./node_modules/ ./node_modules/@nocke | grep '../'
+
+echo -e '\nshow npm-global →  target'
+ls -lar `npm config get prefix`/lib/node_modules `npm config get prefix`/lib/node_modules/@nocke | grep '../'
