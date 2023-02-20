@@ -13,15 +13,5 @@ echo -e "\e[2J\e[H"
 source $scriptDir/sync-testfiles
 echo -e "\e[1A\e[2m\e[34m________________________________________________\e[0m"
 
-# echo "photo (sweet nothing) ============================================"
-# cd $scriptDir
-# echo pwd: $PWD
-# /usr/bin/node $scriptDir/src/main.js
-
-# echo "photo (relative dir) ============================================"
-# cd $scriptDir
-# echo pwd: $PWD
-# /usr/bin/node $scriptDir/src/main.js ..
-
 echo "photo (verbose+specific) ========================================="
-/usr/bin/node $scriptDir/src/main.js -v -l sanitize --stats "$PWD/TEST-FOLDER"
+/usr/bin/node $scriptDir/src/main.js -l sanitize --stats "$PWD/TEST-FOLDER"

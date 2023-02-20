@@ -44,10 +44,11 @@ program
 program
   .command('sanitize', null, { isDefault: true }) // do not use description (would mean standalone)
   .argument('<paths...>', 'paths')
-  .action((paths, opts) => {
-    warn('FYI paths:', paths)
-    warn('FYI opts:', opts)
-    sanitize(program.opts(), paths)
+  .action(async(paths, _opts) => {
+    // warn('FYI paths:', paths)
+    // warn('FYI opts:', _opts)
+    // warn('FYI programm opts:', program.opts())
+    await sanitize(program.opts(), paths)
   }
 
   )

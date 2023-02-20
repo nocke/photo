@@ -2,20 +2,19 @@
 
 import fs from 'fs'
 import path from 'path'
-import { ensureEqual, ensureFileOrFolderOrLinkExists, ensureFolderExists, ensureTrue, important, info, isFile, purple, warn } from '@nocke/util'
+import { ensureEqual, ensureFileOrFolderOrLinkExists, ensureFolderExists, ensureTrue, important, info, isFile, pass, purple, red, sleepWithKeypress, warn } from '@nocke/util'
 import { ensureAcceptablePath } from '../common/utils.js'
 import { getCoreAndExt } from '../model/modelUtils.js'
 import Family from '../model/Family.js'
 import Member from '../model/Member.js'
 import fileUtils from './fileUtils.js'
 
-export default (opts, folderPaths) => {
+export default async(opts, folderPaths) => {
   // DEBUG info('options: ', opts)
 
   // TODO
   ensureTrue(folderPaths.length === 1, 'currently only 1 path supported')
   const folderPath = folderPaths[0]
-  info('folderPath: ', folderPath)
 
   // eslint-disable-next-line unused-imports/no-unused-vars
   const live = !!opts.live
@@ -25,6 +24,37 @@ export default (opts, folderPaths) => {
   const showStats = (opts.stats === undefined) ? !live : opts.stats
 
   verbose && info('COMMAND Sanitize ===============')
+
+  // NEXT:  on live, have two runs with
+  //  sleepWithKeypress
+  if (!live) {
+    sanitizeFolders(folderPath, false, verbose, showStats)
+    !live && info('done dry-run. use `--live` to actually perform deletion')
+  } else {
+    const preRun = sanitizeFolders(folderPath, false, false, showStats)
+
+    if (
+      preRun.filesRenamed === 0 &&
+      preRun.lonelyDeleted === 0 &&
+      preRun.cruftRemoved === 0
+    ) {
+      pass(`Nothing to do on ${folderPath}`, preRun)
+      return
+    }
+
+    warn('press any letter within 3 seconds to not perform live')
+    const char = await sleepWithKeypress(3000)
+
+    if (char !== '') {
+      warn('live execution aborted')
+      return
+    }
+
+    sanitizeFolders(folderPath, true, verbose, false)
+  }
+}
+
+const sanitizeFolders = (folderPath, live, verbose, showStats) => {
 
   const absDirPath = path.resolve(folderPath)
   // DEBUG info(`absPath: ${absDirPath}`)
@@ -73,7 +103,7 @@ export default (opts, folderPaths) => {
   }
 
   // --------------------------------------------------
-  verbose && info('execute sanitation ( dry or live ) ============')
+  verbose && info(`execute sanitation ( ${!live ? 'dry-run' : red('LIVE')} ) ============`)
   // --------------------------------------------------
 
   const stats = {
@@ -82,12 +112,10 @@ export default (opts, folderPaths) => {
     filesRenamed: 0
   }
 
-  // important('DUMP FAMILY ================')
+  // DEBUG important('DUMP FAMILY ================')
   // families.forEach((family) => {
   //   family.dump()
   // })
-
-  verbose && info('execute pruning')
 
   families.forEach((family /*, core */) => {
     verbose && important(`Family ${family.core}(${family.members.size})`)
@@ -130,6 +158,5 @@ export default (opts, folderPaths) => {
     `stats: \n`,
     stats, `\n` // TODO: this is nicely testable!
   )
-
-  !live && info('done dry-run. use `--live` to actually perform deletion')
+  return stats
 }

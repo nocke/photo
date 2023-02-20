@@ -14,7 +14,8 @@
     "syncTestdata": "./sync-testfiles",
     "relink": "./script/relink",
     "checklinks": "./script/checklinks",
-    "phowdy": "./script/saveloop . clear ./script/phowdy.js",
+    "phowdy": "./script/phowdy.js",
+    "phowdy:loop": "./script/saveloop . clear ./script/phowdy.js",
     "test": "mocha --loader=esmock",
     "test-util:loop": "./script/saveloop /depot/PUBLIC/@nocke/util/ clear 'npm t'",
     "test:loop": "./script/saveloop . clear \"npm t $npm_config_test\""
