@@ -9,8 +9,14 @@ import Family from '../model/Family.js'
 import Member from '../model/Member.js'
 import fileUtils from './fileUtils.js'
 
+const nothingToDo = (stats) => (
+  stats.filesRenamed === 0 &&
+  stats.lonelyDeleted === 0 &&
+  stats.cruftRemoved === 0)
+
 export default async(opts, folderPaths) => {
-  // DEBUG info('options: ', opts)
+  // DEBUG
+  info('options: ', opts)
 
   // TODO
   ensureTrue(folderPaths.length === 1, 'currently only 1 path supported')
@@ -20,6 +26,7 @@ export default async(opts, folderPaths) => {
   const live = !!opts.live
   // eslint-disable-next-line unused-imports/no-unused-vars
   const verbose = !!opts.verbose
+  const wait = (!opts.wait)
   // by default: show stats on dry run, not on live
   const showStats = (opts.stats === undefined) ? !live : opts.stats
 
@@ -28,26 +35,30 @@ export default async(opts, folderPaths) => {
   // NEXT:  on live, have two runs with
   //  sleepWithKeypress
   if (!live) {
-    sanitizeFolders(folderPath, false, verbose, showStats)
-    !live && info('done dry-run. use `--live` to actually perform deletion')
+    const run = sanitizeFolders(folderPath, false, verbose, showStats)
+
+    if (nothingToDo(run)) {
+      pass(`Done dry-run. Nothing to do on '${folderPath}'`, run)
+      return
+    }
+    info('Done dry-run. use `--live` to actually perform deletion')
+
   } else {
+
     const preRun = sanitizeFolders(folderPath, false, false, showStats)
 
-    if (
-      preRun.filesRenamed === 0 &&
-      preRun.lonelyDeleted === 0 &&
-      preRun.cruftRemoved === 0
-    ) {
-      pass(`Nothing to do on ${folderPath}`, preRun)
+    if (nothingToDo(preRun)) {
+      pass(`Nothing to do on '${folderPath}'`, preRun)
       return
     }
 
-    warn('press any letter within 3 seconds to not perform live')
-    const char = await sleepWithKeypress(3000)
-
-    if (char !== '') {
-      warn('live execution aborted')
-      return
+    if (wait) {
+      warn('press any letter within 3 seconds to not perform live')
+      const char = await sleepWithKeypress(3000)
+      if (char !== '') {
+        warn('live execution aborted')
+        return
+      }
     }
 
     sanitizeFolders(folderPath, true, verbose, false)
@@ -56,11 +67,18 @@ export default async(opts, folderPaths) => {
 
 const sanitizeFolders = (folderPath, live, verbose, showStats) => {
 
+  ensureTrue(folderPath === '.' ||
+        folderPath.startsWith('./') ||
+        folderPath.startsWith('../') ||
+        folderPath.startsWith('/'),
+        `folderPath '${folderPath}' must begin with '.','./','../' or '/' (absolute path)`
+  )
+
   const absDirPath = path.resolve(folderPath)
   // DEBUG info(`absPath: ${absDirPath}`)
   ensureTrue(absDirPath.startsWith('/'), `not an absolute path ${absDirPath}`)
+  ensureAcceptablePath(absDirPath) // nothing crazy like '/' or system dirs
 
-  ensureAcceptablePath(absDirPath)
   ensureFolderExists(absDirPath, `could not read directoy '${absDirPath}'`)
   const filePaths = fs.readdirSync(absDirPath)
 

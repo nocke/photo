@@ -26,6 +26,7 @@ program
   .option('-l, --live', 'do it (all else is dry-run')
   .option('-s, --stats', 'force stats')
   .option('-n, --no-stats', 'force no stats')
+  .option('--no-wait', { hidden: true }, true) // (needed for testing)
   .on('option:verbose', () => {
     info('TODO: higher verbosity')
     // global.app.verbose = true
@@ -45,13 +46,11 @@ program
   .command('sanitize', null, { isDefault: true }) // do not use description (would mean standalone)
   .argument('<paths...>', 'paths')
   .action(async(paths, _opts) => {
-    // warn('FYI paths:', paths)
-    // warn('FYI opts:', _opts)
-    // warn('FYI programm opts:', program.opts())
+    //  warn('FYI paths:', paths)
+    //  warn('FYI opts:', _opts)
+    //  warn('FYI programm opts:', program.opts())
     await sanitize(program.opts(), paths)
-  }
-
-  )
+  })
 
 try {
   // if no parameters whatsoever, just output (after above version ↑) short help notice

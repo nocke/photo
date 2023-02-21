@@ -1,11 +1,23 @@
-import path from 'path'
-import { assert } from 'chai'
 
-import { argv, check, ensureEqual, ensureFails, ensureFalse, ensureFileExists, ensureFileOrFolderExists, ensureFolderExists, ensureRoot, ensureString, ensureTrue, ensureTruthy, fail, fileCopy, getFolderSize, getInput, getIsoDateAndTime, guard, important, info, iterate, mainWrap, makeDirs, pass, rsyncFolder, sleep, trim, ucFirst, userguard, warn, writeFile } from '@nocke/util'
+import { assert } from 'chai'
 import sanitize from '../../src/commands/sanitize.js'
 /*
 testing the sanitize command (but NOT going through the executable, that happens in executableTest)
  */
+
+// helper routine for async throws testing
+const assertThrowsAsync = async(fn, expectedMessage) => {
+  try {
+    await fn()
+  } catch (err) {
+    if (expectedMessage) {
+      assert.include(err.message, expectedMessage, `Function failed as expected, but could not find message snippet '${expectedMessage}'`)
+    }
+    return
+  }
+  assert.fail('function did not throw as expected')
+}
+
 
 describe(autoSuiteName(
   import.meta.url),
@@ -13,29 +25,21 @@ describe(autoSuiteName(
 
   it('permitted path', () => {
     it('calling sanitize', () => {
+      // not 'live', not recursive thus no danger here
       sanitize({}, '/media')
     })
   })
 
   // negative testing ===============================
-
-  it('negative: inacceptable path', () => {
-    assert.throws(
-      () => {
-        sanitize({}, ['/really/bad/path'])
-      },
-      'not an acceptable path' // words that need to be contained in exception thrown
-    )
+  it('negative: inacceptable path', async() => {
+    await assertThrowsAsync(async() => {
+      await sanitize({}, ['/really/bad/path'])
+    }, 'acceptable path')
   })
 
-  it('negative: non-existing path', () => {
-    assert.throws(
-      () => {
-        sanitize({}, ['/media/notanexistingfolderhere671056710'])
-      },
-      'no such directory'
-    )
+  it('negative: non-existing path', async() => {
+    await assertThrowsAsync(async() => {
+      await sanitize({}, ['/media/benign-path-but.non-existing-folder-here'])
+    }, 'no such directory')
   })
-
-
 })
