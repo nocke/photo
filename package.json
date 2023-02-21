@@ -21,7 +21,7 @@
     "test:loop": "./script/saveloop . clear \"npm t $npm_config_test\""
   },
   "dependencies": {
-    "@nocke/util": "^0.0.6",
+    "@nocke/util": "^0.0.7",
     "commander": "^9.4.1",
     "enquirer": "^2.3.6",
     "trash": "^8.1.1"
