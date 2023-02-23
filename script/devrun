@@ -4,14 +4,13 @@
 # thus this wrap makes it a bit more comfy)
 
 scriptDir=$(dirname -- "$(readlink -f -- "$BASH_SOURCE")")
-# echo "Single run of test scenario"
 
 # clear screen REF stackoverflow.com/a/37778152
 echo -e "\e[2J\e[H"
 
 # sync, and wipe line (KISS)
 source $scriptDir/sync-testfiles
-echo -e "\e[1A\e[2m\e[34m________________________________________________\e[0m"
+# echo -e "\e[1A\e[2m\e[34m________________________________________________\e[0m"
 
 echo "photo ========================================="
-/usr/bin/node $scriptDir/src/main.js -lv sanitize --stats "$PWD/TEST-FOLDER"
+/usr/bin/node $scriptDir/../src/main.js -lv sanitize --stats "$scriptDir/../TEST-FOLDER"

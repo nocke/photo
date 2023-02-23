@@ -14,7 +14,7 @@ Desktop.ini
 node_modules/
 coverage/
 test_dir*/
-/TEST-FOLDER/
+/TEST-FOLDER*/
 
 
 # symbolic links (Ubuntu default naming) to somewhere

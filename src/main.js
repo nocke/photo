@@ -3,6 +3,7 @@
 
 import { readFileSync } from 'fs'
 import sanitize from './commands/sanitize.js'
+import importMedia from './commands/importMedia.js'
 
 import './config.js'
 
@@ -44,13 +45,34 @@ program
 
 program
   .command('sanitize', null, { isDefault: true }) // do not use description (would mean standalone)
+  .description('lowercasing, lonely-deletion, cruft removal') // here it's ok
   .argument('<paths...>', 'paths')
-  .action(async(paths, _opts) => {
-    //  warn('FYI paths:', paths)
-    //  warn('FYI opts:', _opts)
-    //  warn('FYI programm opts:', program.opts())
-    await sanitize(program.opts(), paths)
+  .action(async(_args, _opts, _command) => {
+    warn('FYI args (eventName?):', _args)
+    warn('FYI opts:', _opts)
+    // warn('FYI command:', _command)
+    warn('----\nFYI programm opts:', program.opts())
+    await sanitize(program.opts(), _args)
   })
+
+
+// REF
+// args: an array of positional arguments passed to the command
+// options: an object containing the options passed to the command
+// command: the Command object representing the command being executed
+
+program
+  .command('import', null, {})
+  .description('import fresh media from (known, removable) media locations')
+  .argument('[eventName]', 'eventName')
+  .action(async(_args, _opts, _command) => {
+    warn('FYI args (eventName?):', _args)
+    warn('FYI opts:', _opts)
+    // warn('FYI command:', _command)
+    warn('----\nFYI programm opts:', program.opts())
+    await importMedia(program.opts(), _args)
+  })
+
 
 try {
   // if no parameters whatsoever, just output (after above version ↑) short help notice

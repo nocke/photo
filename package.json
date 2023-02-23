@@ -1,13 +1,13 @@
 {
   "name": "photo-tools",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "private": true,
   "description": "a set of photo organizing scripts and tools, based on nodejs",
   "type": "module",
   "scripts": {
     "clean": "rimraf node_modules/",
-    "devrun": "clear && ./devrun",
-    "devrun:loop": "./script/saveloop . clear ./devrun",
+    "devrun": "clear && ./script/devrun",
+    "devrun:loop": "./script/saveloop . clear ./script/devrun",
     "lint": "eslint src test",
     "lint:fixall": "./script/lint-all.js",
     "lint:fixall2": "eslint src/**/*.js test/**/*.js --fix",

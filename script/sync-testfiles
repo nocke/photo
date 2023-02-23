@@ -6,8 +6,10 @@
 # cd /common/images
 echo 'syncing... ====================================='
 
-SRC="$PWD/node_modules/photo-testfiles/ørig"
-DEST="$PWD/TEST-FOLDER"
+scriptDir=$(dirname -- "$(readlink -f -- "$BASH_SOURCE")")
+SRC="$scriptDir/../node_modules/photo-testfiles/ørig"
+DEST="$scriptDir/../TEST-FOLDER"
+echo SRC $SRC "xxx" DEST $DEST
 
 if [ ! -d "$SRC" ]; then
   echo "\nError: testfile source directory $SRC does not exist, did you do ‘npm install’?"

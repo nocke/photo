@@ -26,37 +26,35 @@ export default async(opts, folderPaths) => {
   const live = !!opts.live
   // eslint-disable-next-line unused-imports/no-unused-vars
   const verbose = !!opts.verbose
-  const wait = (!opts.wait)
-  // by default: show stats on dry run, not on live
-  const showStats = (opts.stats === undefined) ? !live : opts.stats
+  const wait = !opts.wait === false
 
   verbose && info('COMMAND Sanitize ===============')
 
-  // NEXT:  on live, have two runs with
-  //  sleepWithKeypress
-  if (!live) {
-    const run = sanitizeFolders(folderPath, false, verbose, showStats)
+  // first non-live run
+  const statsPass1 = sanitizeFolders(folderPath, false, verbose)
 
-    if (nothingToDo(run)) {
-      pass(`Done dry-run. Nothing to do on '${folderPath}'`, run)
-      return
-    }
+  if (nothingToDo(statsPass1)) {
+    pass(`Nothing to do on '${folderPath}'`, statsPass1)
+    opts.stats === true && info(statsPass1) // show boring 0,0,0 only on explicit request
+    return
+  }
+  opts.stats !== false && info(statsPass1) // show stats unless explicitly not
+
+  if (!live) {
+
     info('Done dry-run. use `--live` to actually perform deletion')
 
   } else {
 
-    const preRun = sanitizeFolders(folderPath, false, false, showStats)
+    important(`wait:`, wait)
+    opts.stats !== false && info(statsPass1) // show stats unless explicitly not
 
-    if (nothingToDo(preRun)) {
-      pass(`Nothing to do on '${folderPath}'`, preRun)
-      return
-    }
-
-    if (wait) {
+    // in testing, there's no TTY, which would create an error in sleepWithKeypress()
+    if (wait && !process.env.mochaRunning) {
       warn('press any letter within 3 seconds to not perform live')
       const char = await sleepWithKeypress(3000)
       if (char !== '') {
-        warn('live execution aborted')
+        warn(red('*** live execution aborted ***'))
         return
       }
     }
@@ -65,7 +63,7 @@ export default async(opts, folderPaths) => {
   }
 }
 
-const sanitizeFolders = (folderPath, live, verbose, showStats) => {
+const sanitizeFolders = (folderPath, live, verbose) => {
 
   ensureTrue(folderPath === '.' ||
         folderPath.startsWith('./') ||
@@ -172,9 +170,5 @@ const sanitizeFolders = (folderPath, live, verbose, showStats) => {
     !dirty && verbose && info(`(unchanged)`)
   })
 
-  showStats && info(
-    `stats: \n`,
-    stats, `\n` // TODO: this is nicely testable!
-  )
   return stats
 }

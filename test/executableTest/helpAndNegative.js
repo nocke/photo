@@ -17,12 +17,18 @@ describe(autoSuiteName(
 
   it('help string sanity test', () => {
     const r = guard('./photo --help', { mute: true })
-    assert(r.includes('Usage:'), 'help does not contain \'Usage:\'')
+    assert.include(r, 'Usage:')
   })
 
-  it('regular sanitize run', () => {
+  it('regular sanitize run /w sanitize keyword', () => {
     const r = guard('./photo -v sanitize ./TEST-FOLDER', { mute: true })
-    assert(r.includes('stats'), 'no stats mentioned')
+    assert.include(r, 'lonelyDeleted:', 'no stats mentioned')
+  })
+
+  it('regular sanitize run w/o sanitize keyword', () => {
+    // and verbose param last (just for kicks)
+    const r = guard('./photo ./TEST-FOLDER -v', { mute: true })
+    assert.include(r, 'lonelyDeleted:', 'no stats mentioned')
   })
 
   // negative testing

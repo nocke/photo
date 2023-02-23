@@ -15,7 +15,7 @@ global.autoSuiteName = (name) => name.split('/test/', 2)[1]
 global.captureStream = (stream) => {
   const oldWrite = stream.write
   let buf = ''
-  stream.write = function(chunk, encoding, callback) {
+  stream.write = function(chunk, _encoding, _callback) {
     buf += chunk.toString() // chunk is a String or Buffer
     oldWrite.apply(stream, arguments)
   }
@@ -29,3 +29,6 @@ global.captureStream = (stream) => {
     }
   }
 }
+
+// to skip certain things (i.e. wait depending on TTY)
+process.env.mochaRunning = '1'
