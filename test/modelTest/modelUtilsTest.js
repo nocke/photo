@@ -58,6 +58,10 @@ describe(autoSuiteName(
     {
       filePath: '/home/foo/søme.päth.cr2.xmp/DSCN9099_small.jPG',
       should: { dir: '/home/foo/søme.päth.cr2.xmp', fileName: 'DSCN9099_small.jPG', core: 'DSCN9099', base: 'DSCN9099_small', extLast: 'jPG', extFull: 'jPG', extSan: 'jpg' }
+    },
+    {
+      filePath: '/home/foo/søme.päth.cr2.xmp/DSCN9099_small.cR2.doP',
+      should: { dir: '/home/foo/søme.päth.cr2.xmp', fileName: 'DSCN9099_small.cR2.doP', core: 'DSCN9099', base: 'DSCN9099_small', extLast: 'doP', extFull: 'cR2.doP', extSan: 'cr2.dop' }
     }
   ]
     .forEach((c) => {

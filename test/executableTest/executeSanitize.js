@@ -11,11 +11,11 @@ function() {
 
   const src = './node_modules/photo-testfiles/ørig'
   const testfolder = './TEST-FOLDER'
-  const numTestFilesTotal = 31
+  const numTestFilesTotal = 35
 
-  const lonelyDeleted = 5
+  const lonelyDeleted = 7
   const cruftRemoved = 4
-  const filesRenamed = 14
+  const filesRenamed = 16
 
   beforeEach(async() => {
     ensureFolderExists(src, `could not find testfiles in '${src}', have you done 'npm i'?`)
@@ -77,6 +77,8 @@ function() {
       'DSCN0179.mov.xmp',
       'DSCN1234.tiff',
       'DSCN9099_small.jpg',
+      'DSCN9099.dop',
+      'DSCN9099.cr2.dop',
       'fiesch.png',
       'fully-tagged.jpg',
       'org_photo_6619372_1644334370000.gt.jpg',
