@@ -48,10 +48,10 @@ program
   .description('lowercasing, lonely-deletion, cruft removal') // here it's ok
   .argument('<paths...>', 'paths')
   .action(async(_args, _opts, _command) => {
-    warn('FYI args (eventName?):', _args)
-    warn('FYI opts:', _opts)
+    // warn('FYI args (eventName?):', _args)
+    // warn('FYI opts:', _opts) // turns out to be empty, unlike program.opts() → why? maybe command specific options?
     // warn('FYI command:', _command)
-    warn('----\nFYI programm opts:', program.opts())
+    // warn('----\nFYI programm opts:', program.opts()) // actual options
     await sanitize(program.opts(), _args)
   })
 

@@ -15,8 +15,7 @@ const nothingToDo = (stats) => (
   stats.cruftRemoved === 0)
 
 export default async(opts, folderPaths) => {
-  // DEBUG
-  info('options: ', opts)
+  // DEBUG info('options: ', opts)
 
   // TODO
   ensureTrue(folderPaths.length === 1, 'currently only 1 path supported')
