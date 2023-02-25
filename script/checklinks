@@ -1,9 +1,29 @@
 #!/usr/bin/env bash
+# UTILPATH_LOCAL='./node_modules/@nocke/utilX'
+
+_showError() {
+    echo -e "\e[91;48;5;52m    » $* « failed ✗✗✗\e[0m"
+}
+
+UTILPATH_LOCAL='./node_modules/@nocke/util'
+TESTFILEPATH_LOCAL='./node_modules/photo-testfiles'
+
+UTILPATH_GLOBAL=`npm config get prefix`/lib/node_modules/@nocke/util
+TESTFILEPATH_GLOBAL=`npm config get prefix`/lib/node_modules/photo-testfiles
 
 echo '\nshow local → npm-global (expected: 2 entries) ==============='
 ls -lar ./node_modules/ ./node_modules/@nocke | grep '../'
 
+[[ -e $UTILPATH_LOCAL ]] || _showError "ERORR: local $UTILPATH_LOCAL not existing"
+[[ -L $UTILPATH_LOCAL ]] || _showError "ERORR: local $UTILPATH_LOCAL not a link"
+[[ -e $TESTFILEPATH_LOCAL ]] || _showError "ERORR: local $TESTFILEPATH_LOCAL not existing"
+[[ -L $TESTFILEPATH_LOCAL ]] || _showError "ERORR: local $TESTFILEPATH_LOCAL not a link"
+
 echo -e '\nshow npm-global →  target ================================'
 ls -lar `npm config get prefix`/lib/node_modules | grep '../'
-echo ''
 ls -lar `npm config get prefix`/lib/node_modules/@nocke | grep '../'
+
+[[ -e $UTILPATH_GLOBAL ]] || _showError "ERORR: global $UTILPATH_GLOBAL not existing"
+[[ -L $UTILPATH_GLOBAL ]] || _showError "ERORR: global $UTILPATH_GLOBAL not a link"
+[[ -e $TESTFILEPATH_GLOBAL ]] || _showError "ERORR: global $TESTFILEPATH_GLOBAL not existing"
+[[ -L $TESTFILEPATH_GLOBAL ]] || _showError "ERORR: global $TESTFILEPATH_GLOBAL not a link"

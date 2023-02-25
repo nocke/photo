@@ -4,13 +4,18 @@
 if ! [ -L node-modules/@nocke/util ] && ! [ -d node-modules/@nocke/util ]; then
   echo -e '\nrecreating link for @nocke/util'
   # too slow npm link @nocke/util    --no-save --no-package-lock --no-shrinkwrap
+  rm -rf ./node_modules/@nocke/util
   ln -snf "`npm config get prefix`/lib/node_modules/@nocke/util" ./node_modules/@nocke/util
 fi
 
 if ! [ -L node-modules/photo-testfiles ] && ! [ -d node-modules/photo-testfiles ]; then
   echo -e '\nrecreating link for photo-testfiles'
   # too slow:  npm link photo-testfiles    --no-save --no-package-lock --no-shrinkwrap
+  # -n option alone insufficient
+  rm -rf ./node_modules/photo-testfiles
   ln -snf "`npm config get prefix`/lib/node_modules/photo-testfiles" ./node_modules/photo-testfiles
+else
+  echo -e '\nNOT recreating link for photo-testfiles'
 fi
 
 ./script/checklinks
