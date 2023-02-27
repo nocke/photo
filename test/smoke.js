@@ -1,4 +1,4 @@
-import { ensureFolderExists, info } from '@nocke/util'
+import { ensureFolderExists } from '@nocke/util'
 import { assert } from 'chai'
 
 /*

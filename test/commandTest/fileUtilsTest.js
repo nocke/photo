@@ -1,7 +1,6 @@
 import fs from 'fs'
 import { assert } from 'chai'
-import modelUtils from '../../src/model/modelUtils.js'
-import { purple, warn } from '@nocke/util'
+import { guard, warn } from '@nocke/util'
 import fileUtils from '../../src/commands/fileUtils.js'
 import path from 'path'
 
@@ -42,6 +41,21 @@ describe(autoSuiteName(
     assert.strictEqual(hook.captured(), '')
   })
 
+  it('trash deletion completed after await', async() => {
+    const absFilePath = path.resolve('./XTESTFILE.txt')
+
+    guard(`rm -f ${absFilePath}`)
+
+    assert.fileDoesNotExist(absFilePath)
+    guard(`touch ${absFilePath}`)
+    assert.fileExists(absFilePath)
+
+    // await trash(absDirPath)
+    await fileUtils.deleteFile(absFilePath, true, false, 'testing')
+    assert.fileDoesNotExist(absFilePath) // ← the crucial test for async'ness
+
+    guard(`rm -f ${absFilePath}`)
+  })
 
   it('delete File', async() => {
     const absDirPath1 = path.resolve(testFile1)
