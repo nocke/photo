@@ -42,7 +42,7 @@ function() {
     assert.include(r, `lonelyDeleted: ${lonelyDeleted}`)
     assert.include(r, `cruftRemoved: ${cruftRemoved}`)
     assert.include(r, `filesRenamed: ${filesRenamed}`)
-    assert.include(r, `totalFilesAfter: ${numTestFilesTotal}`)
+    assert.notInclude(r, `totalFilesAfter:`) // no effective total when not live
 
     // ...and that nothing actually happened
     ensureEqual(
