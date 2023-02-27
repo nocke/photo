@@ -31,6 +31,7 @@ export default async(opts, folderPaths) => {
 
   // first non-live run
   const statsPass1 = await sanitizeFolders(folderPath, false, verbose)
+  delete statsPass1.totalFilesAfter // not meaningful on non-live
 
   if (nothingToDo(statsPass1)) {
     pass(`Nothing to do on '${folderPath}'`, statsPass1)
@@ -40,27 +41,30 @@ export default async(opts, folderPaths) => {
   opts.stats !== false && info(statsPass1) // show stats unless explicitly not
 
   if (!live) {
-
     info('Done dry-run. use `--live` to actually perform deletion')
-
-  } else {
-
-    important(`wait:`, wait)
-    opts.stats !== false && info(statsPass1) // show stats unless explicitly not
-
-    // in testing, there's no TTY, thus need to skip sleepWithKeypress()
-    if (wait && !process.env.mochaRunning) {
-      warn('press any letter within 3 seconds to not perform live')
-      const char = await sleepWithKeypress(3000)
-      if (char !== '') {
-        warn(red('*** live execution aborted ***'))
-        return
-      }
-    }
-
-    const statsPass2 = await sanitizeFolders(folderPath, true, verbose)
-    opts.stats !== false && info(statsPass2)
+    return
   }
+
+  // in testing, there's no TTY, thus need to skip sleepWithKeypress()
+  if (wait && !process.env.mochaRunning) {
+    warn('press any letter within 3 seconds to not perform live')
+    const char = await sleepWithKeypress(3000)
+    if (char !== '') {
+      warn(red('*** live execution aborted ***'))
+      return
+    }
+  }
+
+  const statsPass2 = await sanitizeFolders(folderPath, true, verbose)
+  // repeat final stats (as list can get quite long)
+  opts.stats !== false && info(statsPass2)
+
+  if (
+    statsPass2.totalFilesBefore - statsPass2.lonelyDeleted - statsPass2.cruftRemoved !==
+    statsPass2.totalFilesAfter) {
+    warn('warn: totalFilesAfter mismatch')
+  }
+
 }
 
 const sanitizeFolders = async(folderPath, live, verbose) => {
@@ -145,12 +149,12 @@ const sanitizeFolders = async(folderPath, live, verbose) => {
 
     // 1) prune lonely RAWs (and lonely sidecars!)
     if (family.hasLoneleyRaw()) {
-      family.getLonelyMembers().forEach(async m => {
+      for (const m of family.getLonelyMembers()) {
         await fileUtils.deleteFile(m.dir + '/' + m.fileName, live, verbose, 'lonely')
         stats.lonelyDeleted++
         dirty = true
         family.remove(m)
-      })
+      }
     }
 
     // 2) cruft removal
@@ -161,26 +165,26 @@ const sanitizeFolders = async(folderPath, live, verbose) => {
       family.remove(m)
     }
 
-    // 3) lowercase rename   (foreach is okay, because renameFile is Sync)
-    family.getAllMembers().filter(m => m.extSan.length > 0).forEach(m => {
+    // 3) rename (to lowercase, and stuff like 'jpeg'->'jpg'
+    for (const m of family.getAllMembers().filter(m => m.extSan.length > 0)) {
       const srcName = m.fileName
       const destName = m.base + '.' + m.extSan
 
+      // COULDDO handle 'naming collisions through lowercasing'
       if (srcName !== destName) {
         fileUtils.renameFile(absDirPath, srcName, destName, live, verbose, 'sanitation rename')
         stats.filesRenamed++
         dirty = true
       }
-    })
+    }
 
-    process?.stdout?.write('\x1b[1A\x1b[2K') // (possibly no stdout in mocha test)
-    !dirty && verbose && info(gray(`${familyString} (unchanged)`))
+    if (!dirty && verbose) {
+      // process?.stdout?.write('\x1b[1A\x1b[2K') // (possibly no stdout in mocha test)
+      info(gray(`${familyString} (unchanged)`))
+    }
   }
 
   const filePaths2 = fs.readdirSync(absDirPath)
-  // TODO remove for (const filePath of filePaths2) {
-  //   warn(purple(filePath))
-  // }
   stats.totalFilesAfter = filePaths2.length // fs.readdirSync(absDirPath).length
 
   return stats

@@ -13,4 +13,4 @@ source $scriptDir/sync-testfiles
 # echo -e "\e[1A\e[2m\e[34m________________________________________________\e[0m"
 
 echo "photo ========================================="
-/usr/bin/node $scriptDir/../src/main.js -lv sanitize --stats "$scriptDir/../TEST-FOLDER"
+/usr/bin/node $scriptDir/../src/main.js -l sanitize --stats "$scriptDir/../TEST-FOLDER"

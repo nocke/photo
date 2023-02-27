@@ -23,8 +23,8 @@ const extImagesNonRaw = ['jpg', 'jpeg', 'png', 'tif', 'tiff', 'gif', 'psd']
 const extImagesRaw = ['cr', 'raw', 'cr2', 'cr3', 'dng', 'nef']
 const extImages = [...extImagesNonRaw, ...extImagesRaw]
 const extMedia = [...extImages, ...extVideo]
-const extSidecars = ['xmp', 'dop', 'html'] // adobe sidecar, dxo sidecar, DJI Panorama accompaigning html
-const extCruft = ['lrf'] // DJI low-res previews
+const extSidecars = ['xmp', 'dop'] // adobe sidecar, dxo sidecar
+const extCruft = ['lrf', 'html'] // DJI low-res previews, DJI Panorama accompaigning html
 
 const extAllRelevant = [...extVideo, ...extImages, ...extSidecars, ...extCruft]
 

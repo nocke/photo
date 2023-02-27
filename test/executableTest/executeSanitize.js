@@ -4,7 +4,10 @@ import { ensureEqual, ensureFolderExists, guard, pass, warn } from '@nocke/util'
 import { info } from 'console'
 
 // REF for manual regression
-// rsync -rtogpv --exclude='.git' --inplace --delete ./node_modules/photo-testfiles/ørig/ ./TEST-FOLDER
+// rsync found in ./script/sync-testfiles
+
+// test, fully executing the command line command
+// • no async, no wait for that very reason!
 
 describe(autoSuiteName(
   import.meta.url),
@@ -13,20 +16,18 @@ function() {
 
   const src = './node_modules/photo-testfiles/ørig'
   const testfolder = './TEST-FOLDER'
-  const numTestFilesTotal = 36
 
+  const numTestFilesTotal = 36
   const lonelyDeleted = 7
-  const cruftRemoved = 4
-  const filesRenamed = 17
+  const cruftRemoved = 5
+  const filesRenamed = 16
 
   beforeEach(async() => {
     ensureFolderExists(src, `could not find testfiles in '${src}', have you done 'npm i'?`)
     guard(`rsync -rtogp --exclude='.git' --inplace --delete "${src}/" "${testfolder}"`)
     const filePaths = fs.readdirSync(testfolder)
-    ensureEqual(numTestFilesTotal, filePaths.length, `A after rsync, there are too few or too many files`)
 
-    // COULDO create two links (filename-family-conforming, 1 broken, one intact)
-    // for hardening
+    ensureEqual(numTestFilesTotal, filePaths.length, `A after rsync, there are too ${numTestFilesTotal > filePaths.length ? 'few' : 'many'} files. ${filePaths.length} instead of ${numTestFilesTotal}`)
 
     pass('rsync’ed TEST-FILDER...')
   })
@@ -34,7 +35,7 @@ function() {
   it('perform sanitize - not live', () => {
     // stats on by default
     const r = guard(`./photo sanitize ${testfolder}`, { mute: true })
-    // DEBUG info(r)
+    // DEBUG  info(r)
 
     // assert stats output
     assert.include(r, `totalFilesBefore: ${numTestFilesTotal}`)
@@ -55,9 +56,6 @@ function() {
     // `-s` → need stats!
     const r = guard(`./photo sanitize -vsl ${testfolder}`, { mute: true })
     // DEBUG info(purple(r))
-
-    console.log(r)
-    console.log('------------------')
 
     // assert certain stats output
     assert.include(r, `totalFilesBefore: ${numTestFilesTotal}`)
