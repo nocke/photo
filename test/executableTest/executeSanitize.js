@@ -3,6 +3,8 @@ import { assert } from 'chai'
 import { ensureEqual, ensureFolderExists, guard, pass, warn } from '@nocke/util'
 import { info } from 'console'
 
+// REF for manual regression
+// rsync -rtogpv --exclude='.git' --inplace --delete ./node_modules/photo-testfiles/ørig/ ./TEST-FOLDER
 
 describe(autoSuiteName(
   import.meta.url),
@@ -11,17 +13,21 @@ function() {
 
   const src = './node_modules/photo-testfiles/ørig'
   const testfolder = './TEST-FOLDER'
-  const numTestFilesTotal = 35
+  const numTestFilesTotal = 36
 
   const lonelyDeleted = 7
   const cruftRemoved = 4
-  const filesRenamed = 16
+  const filesRenamed = 17
 
   beforeEach(async() => {
     ensureFolderExists(src, `could not find testfiles in '${src}', have you done 'npm i'?`)
     guard(`rsync -rtogp --exclude='.git' --inplace --delete "${src}/" "${testfolder}"`)
     const filePaths = fs.readdirSync(testfolder)
     ensureEqual(numTestFilesTotal, filePaths.length, `A after rsync, there are too few or too many files`)
+
+    // COULDO create two links (filename-family-conforming, 1 broken, one intact)
+    // for hardening
+
     pass('rsync’ed TEST-FILDER...')
   })
 
@@ -30,10 +36,12 @@ function() {
     const r = guard(`./photo sanitize ${testfolder}`, { mute: true })
     // DEBUG info(r)
 
-    // assert certain stats output
+    // assert stats output
+    assert.include(r, `totalFilesBefore: ${numTestFilesTotal}`)
     assert.include(r, `lonelyDeleted: ${lonelyDeleted}`)
     assert.include(r, `cruftRemoved: ${cruftRemoved}`)
     assert.include(r, `filesRenamed: ${filesRenamed}`)
+    assert.include(r, `totalFilesAfter: ${numTestFilesTotal}`)
 
     // ...and that nothing actually happened
     ensureEqual(
@@ -48,15 +56,23 @@ function() {
     const r = guard(`./photo sanitize -vsl ${testfolder}`, { mute: true })
     // DEBUG info(purple(r))
 
+    console.log(r)
+    console.log('------------------')
+
     // assert certain stats output
+    assert.include(r, `totalFilesBefore: ${numTestFilesTotal}`)
     assert.include(r, `lonelyDeleted: ${lonelyDeleted}`)
     assert.include(r, `cruftRemoved: ${cruftRemoved}`)
     assert.include(r, `filesRenamed: ${filesRenamed}`)
 
+    // totalFilesAfter: check stats speak truth and actual files speak truth:
+    const numFilesAfter = numTestFilesTotal - lonelyDeleted - cruftRemoved
+    assert.include(r, `totalFilesAfter: ${numFilesAfter}`)
+
     // ...and that the right thing actually happened
     const isFiles = fs.readdirSync(testfolder)
     ensureEqual(
-      numTestFilesTotal - lonelyDeleted - cruftRemoved, isFiles.length,
+      numFilesAfter, isFiles.length,
       `if not live, number of test files must remain the same`
     )
 
@@ -106,5 +122,3 @@ function() {
     assert(missing.length === 0, '\n' + missing.join('\n'))
   })
 })
-
-// guard(`rm '${testfolder}/DJI_0227.JPG'`)
