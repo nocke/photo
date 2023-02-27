@@ -1,6 +1,7 @@
 import '../src/config.js'
 // ↑ all tests need the omnipresent [global.]config
-
+import fs from 'fs'
+import { assert } from 'chai'
 global.autoSuiteName = (name) => name.split('/test/', 2)[1]
 
 // export const mochaHooks = {
@@ -29,6 +30,11 @@ global.captureStream = (stream) => {
     }
   }
 }
+
+assert.fileExists = (filePath, message) => assert(fs.existsSync(filePath), `file '${filePath}' does not exist.\n${message}`)
+
+assert.fileDoesNotExist = (filePath, message) => assert(!fs.existsSync(filePath), `file '${filePath}' exists (but shouldn't).\n${message}`)
+
 
 // to skip certain things (i.e. wait depending on TTY)
 process.env.mochaRunning = '1'
