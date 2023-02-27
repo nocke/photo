@@ -2,7 +2,7 @@
 
 import fs from 'fs'
 import path from 'path'
-import { ensureEqual, ensureFileOrFolderOrLinkExists, ensureFolderExists, ensureTrue, important, info, isFile, pass, purple, red, sleepWithKeypress, warn } from '@nocke/util'
+import { ensureEqual, ensureFileOrFolderOrLinkExists, ensureFolderExists, ensureTrue, gray, important, info, isFile, pass, purple, red, sleepWithKeypress, warn } from '@nocke/util'
 import { ensureAcceptablePath } from '../common/utils.js'
 import { getCoreAndExt } from '../model/modelUtils.js'
 import Family from '../model/Family.js'
@@ -30,7 +30,7 @@ export default async(opts, folderPaths) => {
   verbose && info('COMMAND Sanitize ===============')
 
   // first non-live run
-  const statsPass1 = sanitizeFolders(folderPath, false, verbose)
+  const statsPass1 = await sanitizeFolders(folderPath, false, verbose)
 
   if (nothingToDo(statsPass1)) {
     pass(`Nothing to do on '${folderPath}'`, statsPass1)
@@ -48,7 +48,7 @@ export default async(opts, folderPaths) => {
     important(`wait:`, wait)
     opts.stats !== false && info(statsPass1) // show stats unless explicitly not
 
-    // in testing, there's no TTY, which would create an error in sleepWithKeypress()
+    // in testing, there's no TTY, thus need to skip sleepWithKeypress()
     if (wait && !process.env.mochaRunning) {
       warn('press any letter within 3 seconds to not perform live')
       const char = await sleepWithKeypress(3000)
@@ -58,11 +58,20 @@ export default async(opts, folderPaths) => {
       }
     }
 
-    sanitizeFolders(folderPath, true, verbose, false)
+    const statsPass2 = await sanitizeFolders(folderPath, true, verbose)
+    opts.stats !== false && info(statsPass2)
   }
 }
 
-const sanitizeFolders = (folderPath, live, verbose) => {
+const sanitizeFolders = async(folderPath, live, verbose) => {
+
+  const stats = {
+    totalFilesBefore: undefined,
+    lonelyDeleted: 0,
+    cruftRemoved: 0,
+    filesRenamed: 0,
+    totalFilesAfter: undefined
+  }
 
   ensureTrue(folderPath === '.' ||
         folderPath.startsWith('./') ||
@@ -85,7 +94,10 @@ const sanitizeFolders = (folderPath, live, verbose) => {
   // Parse Files into families and members
   // --------------------------------------------------
   // filePath(s) ist just shallow fileNam(s), no recursion into subfolders yet
+
   for (const filePath of filePaths) {
+    stats.totalFilesBefore = filePaths.length
+
     const absFilePath = absDirPath + '/' + filePath
     ensureFileOrFolderOrLinkExists(absFilePath)
 
@@ -121,25 +133,20 @@ const sanitizeFolders = (folderPath, live, verbose) => {
   verbose && info(`execute sanitation ( ${!live ? 'dry-run' : red('LIVE')} ) ============`)
   // --------------------------------------------------
 
-  const stats = {
-    lonelyDeleted: 0,
-    cruftRemoved: 0,
-    filesRenamed: 0
-  }
-
   // DEBUG important('DUMP FAMILY ================')
   // families.forEach((family) => {
   //   family.dump()
   // })
 
-  families.forEach((family /*, core */) => {
-    verbose && important(`Family ${family.core}(${family.members.size})`)
+  for (const [_core, family] of families) {
+    const familyString = `Family ${family.core}(${family.members.size})`
+    verbose && important(familyString)
     let dirty = false
 
     // 1) prune lonely RAWs (and lonely sidecars!)
     if (family.hasLoneleyRaw()) {
-      family.getLonelyMembers().forEach(m => {
-        fileUtils.deleteFile(m.dir + '/' + m.fileName, live, verbose, 'lonely')
+      family.getLonelyMembers().forEach(async m => {
+        await fileUtils.deleteFile(m.dir + '/' + m.fileName, live, verbose, 'lonely')
         stats.lonelyDeleted++
         dirty = true
         family.remove(m)
@@ -147,14 +154,14 @@ const sanitizeFolders = (folderPath, live, verbose) => {
     }
 
     // 2) cruft removal
-    family.getCruftMembers().forEach(m => {
-      fileUtils.deleteFile(m.dir + '/' + m.fileName, live, verbose, 'cruft')
+    for (const m of family.getCruftMembers()) {
+      await fileUtils.deleteFile(m.dir + '/' + m.fileName, live, verbose, 'cruft2')
       stats.cruftRemoved++
       dirty = true
       family.remove(m)
-    })
+    }
 
-    // 3) lowercase rename
+    // 3) lowercase rename   (foreach is okay, because renameFile is Sync)
     family.getAllMembers().filter(m => m.extSan.length > 0).forEach(m => {
       const srcName = m.fileName
       const destName = m.base + '.' + m.extSan
@@ -166,8 +173,15 @@ const sanitizeFolders = (folderPath, live, verbose) => {
       }
     })
 
-    !dirty && verbose && info(`(unchanged)`)
-  })
+    process?.stdout?.write('\x1b[1A\x1b[2K') // (possibly no stdout in mocha test)
+    !dirty && verbose && info(gray(`${familyString} (unchanged)`))
+  }
+
+  const filePaths2 = fs.readdirSync(absDirPath)
+  // TODO remove for (const filePath of filePaths2) {
+  //   warn(purple(filePath))
+  // }
+  stats.totalFilesAfter = filePaths2.length // fs.readdirSync(absDirPath).length
 
   return stats
 }
