@@ -16,6 +16,7 @@ if [ ! -d "$SRC" ]; then
   exit 1
 fi
 
+# mind the `/` after first param!
 rsync -rtogp --exclude='.git' --inplace --delete "$SRC/" "$DEST"
 
 if [ $? -ne 0 ]; then
