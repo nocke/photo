@@ -22,13 +22,13 @@ There will one day be more elegant ways, but for now I suggest adding a bash fil
 node "/depot/PUBLIC/@nocke/photo/src/main.js" "$@"
 ```
 
-## „Devrun” for development
+## “Devrun” for development
 
-keep running the sanitize command in a loop, watching on every filechange:
+restores the `./TEST-FOLDER` in its initial state (using `rsync`) and runs a (somewhat) representative photo cli command with sanitize option. (locally adjust to your need and liking)
 
-`npm run devrun` (or simply `./devrun`) to run the basic cli command (currently in 3 flavors)
+`npm run devrun` (or simply `./devrun`) to run the basic cli command
 
-`npm run devrun:loop` same thing, but in a loop, watching the entire folder, except node_modules
+`npm run devrun:loop` same thing, but in a loop, watching the entire folder, except node_modules. see [./script/saveloop](./script/saveloop)
 
 ----
 
