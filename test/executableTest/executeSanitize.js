@@ -17,7 +17,7 @@ function() {
   const src = './node_modules/photo-testfiles/ørig'
   const testfolder = './TEST-FOLDER'
 
-  const numTestFilesTotal = 36
+  const numTestFilesTotal = 36 + 2
   const lonelyDeleted = 7
   const cruftRemoved = 5
   const filesRenamed = 16
@@ -25,6 +25,8 @@ function() {
   beforeEach(async() => {
     ensureFolderExists(src, `could not find testfiles in '${src}', have you done 'npm i'?`)
     guard(`rsync -rtogp --exclude='.git' --inplace --delete "${src}/" "${testfolder}"`)
+    guard(`ln -sf ../README.md ${testfolder}/DJI_6665validLinkButLinkEh.jpg`)
+    guard(`ln -sf /road/to/nowhere ${testfolder}/DJI_6666.jpeg`)
     const filePaths = fs.readdirSync(testfolder)
 
     ensureEqual(numTestFilesTotal, filePaths.length, `A after rsync, there are too ${numTestFilesTotal > filePaths.length ? 'few' : 'many'} files. ${filePaths.length} instead of ${numTestFilesTotal}`)
@@ -99,7 +101,9 @@ function() {
       'Thumbs.db',
       'Thumbs.db:encryptable',
       'TÏschlérn2.tif',
-      'TÏschlérn.tif'
+      'TÏschlérn.tif',
+      'DJI_6665validLinkButLinkEh.jpg',
+      'DJI_6666.jpeg'
     ]
 
     // merge, avoid duplicats, sort (case-insensitive)
