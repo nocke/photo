@@ -1,3 +1,4 @@
+// ./node_modules/.bin/eslint src --fix   to apply at large scale
 {
   "root": true,
   "env": {

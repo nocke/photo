@@ -1,5 +1,4 @@
 # REF https://github.com/Bash-it/bash-it/blob/master/.editorconfig
-# ./node_modules/.bin/eslint src --fix   to apply at large scale
 [*]
 indent_style = space
 indent_size = 2
