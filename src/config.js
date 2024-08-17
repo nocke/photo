@@ -11,6 +11,7 @@ const acceptablePaths = [
   '/drive',
   '/depot',
   '/common',
+  '/mnt',
   '/share',
   '/media'
 ]
